@@ -1,0 +1,84 @@
+---
+sidebar_position: 9
+---
+
+# timeout()
+
+## 함수 시그니처
+
+```ts
+timeout: (ms: number) => R
+```
+
+## 관련 RequestInit 속성
+
+`abort()`가 설정되지 않은 경우 요청 실행 시 다음 signal이 추가됩니다.
+
+```ts
+{
+  signal: AbortSignal.timeout(ms)
+}
+```
+
+`abort()`가 이미 설정된 경우에는 해당 컨트롤러의 signal을 유지하고, 제한 시간이 지나면 컨트롤러의 `abort()`를 호출합니다.
+
+## 설명
+
+요청의 제한 시간을 밀리초 단위로 설정합니다. 지정한 시간이 지나기 전에 요청이 완료되지 않으면 요청을 중단합니다.
+
+`timeout()` 호출 시에는 빌더 설정에 제한 시간만 저장되며, 실제 timeout 처리와 signal 설정은 요청 실행 시 적용됩니다.
+
+```ts
+{
+  timeout: ms
+}
+```
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+const response = await api
+  .get('/slow-resource')
+  .timeout(5000)
+  .toResponse();
+```
+
+`abort()`를 함께 사용하지 않은 경우 실행 시 실제 `RequestInit`은 다음과 같습니다.
+
+```ts
+{
+  method: 'GET',
+  signal: AbortSignal.timeout(5000),
+}
+```
+
+`abort()`와 함께 사용할 수도 있습니다.
+
+```ts
+const controller = new AbortController();
+
+const response = await api
+  .get('/slow-resource')
+  .abort(controller)
+  .timeout(5000)
+  .toResponse();
+```
+
+이 경우 실제 `RequestInit`은 다음과 같으며, 5초 뒤 `controller.abort()`가 호출됩니다.
+
+```ts
+{
+  method: 'GET',
+  signal: controller.signal,
+}
+```
+
+## 주의사항
+
+- `ms`에는 0보다 큰 밀리초 값을 사용하는 것을 권장합니다. 현재 구현에서 `0`은 timeout으로 적용되지 않습니다.
+- `abort()`를 사용하지 않는 timeout은 실행 환경의 `AbortSignal.timeout()` 지원이 필요합니다.
+- timeout으로 중단된 요청은 오류로 처리됩니다.

@@ -1,0 +1,58 @@
+---
+sidebar_position: 6
+---
+
+# redirect()
+
+## 함수 시그니처
+
+```ts
+redirect: (redirect: HTTPRedirect) => R
+```
+
+## 관련 RequestInit 속성
+
+```ts
+{
+  redirect: redirect
+}
+```
+
+## 설명
+
+Fetch API의 `RequestInit.redirect` 값을 설정합니다. 서버가 리다이렉트 응답을 반환했을 때 요청을 처리하는 방식을 지정합니다.
+
+사용 가능한 값은 다음과 같습니다.
+
+| enum | 실제 값 | 동작 |
+| --- | --- | --- |
+| `HTTPRedirect.FOLLOW` | `'follow'` | 리다이렉트를 따라갑니다. |
+| `HTTPRedirect.ERROR` | `'error'` | 리다이렉트 응답을 오류로 처리합니다. |
+| `HTTPRedirect.MANUAL` | `'manual'` | 리다이렉트를 자동으로 따라가지 않습니다. |
+
+## 예제
+
+```ts
+import { dench, HTTPRedirect } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+const response = await api
+  .get('/redirected-resource')
+  .redirect(HTTPRedirect.MANUAL)
+  .toResponse();
+```
+
+실제 `RequestInit`은 다음과 같습니다.
+
+```ts
+{
+  method: 'GET',
+  redirect: 'manual',
+}
+```
+
+## 주의사항
+
+- `HTTPRedirect.MANUAL` 응답의 세부 정보에 접근할 수 있는 범위는 실행 환경과 CORS 정책에 따라 달라질 수 있습니다.
+- `HTTPRedirect.ERROR`를 사용하여 리다이렉트가 실패하면 등록된 `error()` 콜백이 호출된 뒤 오류가 다시 던져집니다.
