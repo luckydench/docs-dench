@@ -1,0 +1,44 @@
+---
+sidebar_position: 4
+---
+
+# DenchGetBuilder
+
+## 간략한 설명
+
+GET과 DELETE 요청을 구성하는 빌더 타입입니다. 요청 body API 없이 공통 빌더 API와 실행 API를 제공합니다.
+
+## 타입 정의
+
+```ts
+interface DenchGetBuilder<T>
+  extends DenchBuilder<T, DenchGetBuilder<T>>,
+    DenchRunner<T> {
+  api: <P = T>(api: string) => DenchGetBuilder<P>;
+}
+```
+
+### 제너릭
+
+| Generic | Description |
+| --- | --- |
+| `T` | `toJson()`이 반환할 JSON 응답 타입입니다. |
+| `P` | `api<P>()` 호출 시 새 빌더에 지정할 JSON 응답 타입입니다. 기본값은 `T`입니다. |
+
+## 프로퍼티
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `api` | `<P = T>(api: string) => DenchGetBuilder<P>` | Yes | API 경로와 응답 타입을 변경합니다. |
+
+`DenchBuilder<T, DenchGetBuilder<T>>`와 `DenchRunner<T>`의 모든 프로퍼티도 상속합니다.
+
+## 사용처
+
+- `DenchInterface.get<T>()`의 반환 타입입니다.
+- `DenchInterface.delete<T>()`의 반환 타입입니다.
+- GET과 DELETE 요청의 설정 및 실행 API에 사용됩니다.
+
+```ts
+import type { DenchGetBuilder } from 'dench-fetch';
+```

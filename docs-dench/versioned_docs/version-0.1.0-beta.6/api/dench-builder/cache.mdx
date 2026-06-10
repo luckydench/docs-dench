@@ -1,0 +1,61 @@
+---
+sidebar_position: 5
+---
+
+# cache()
+
+## 함수 시그니처
+
+```ts
+cache: (cache: HTTPCache) => R
+```
+
+## 관련 RequestInit 속성
+
+```ts
+{
+  cache: cache
+}
+```
+
+## 설명
+
+Fetch API의 `RequestInit.cache` 값을 설정합니다. 브라우저가 HTTP 캐시를 조회하거나 갱신하는 방식을 지정합니다.
+
+사용 가능한 값은 다음과 같습니다.
+
+| enum | 실제 값 |
+| --- | --- |
+| `HTTPCache.DEFAULT` | `'default'` |
+| `HTTPCache.NO_CACHE` | `'no-cache'` |
+| `HTTPCache.NO_STORE` | `'no-store'` |
+| `HTTPCache.RELOAD` | `'reload'` |
+| `HTTPCache.FORCE_CACHE` | `'force-cache'` |
+| `HTTPCache.ONLY_IF_CACHED` | `'only-if-cached'` |
+
+## 예제
+
+```ts
+import { dench, HTTPCache } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+const users = await api
+  .get('/users')
+  .cache(HTTPCache.NO_CACHE)
+  .toJson();
+```
+
+실제 `RequestInit`은 다음과 같습니다.
+
+```ts
+{
+  method: 'GET',
+  cache: 'no-cache',
+}
+```
+
+## 주의사항
+
+- 캐시 모드의 실제 동작은 실행 환경과 서버의 HTTP 캐시 헤더에 영향을 받습니다.
+- 브라우저에서 `only-if-cached`는 일반적으로 `mode: 'same-origin'`과 함께 사용해야 합니다.

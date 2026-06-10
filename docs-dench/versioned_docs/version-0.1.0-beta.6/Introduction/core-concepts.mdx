@@ -1,0 +1,152 @@
+---
+sidebar_position: 3
+---
+
+# 핵심 개념 (Core Concepts)
+
+`dench-fetch`의 API는 **클라이언트 생성 → 요청 빌더 구성 → 요청 실행**의 세 단계로 이루어집니다.
+
+```ts
+const api = dench('https://api.example.com'); // 클라이언트 생성
+
+const request = api
+  .get<User>('/users/1') // 요청 빌더 생성
+  .auth('access-token')
+  .timeout(3000); // 요청 설정 구성
+
+const user = await request.toJson(); // 요청 실행
+```
+
+## 1. 클라이언트
+
+`dench(baseURL)`은 같은 서버를 대상으로 요청을 만들 수 있는 클라이언트를 반환합니다.
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+```
+
+클라이언트는 `get()`, `post()`, `put()`, `delete()`를 제공하며, 각 메서드는 즉시 요청을 보내지 않고 요청 빌더를 반환합니다.
+
+## 2. 요청 빌더
+
+요청 빌더에는 HTTP 메서드, API 경로, 인증, timeout 등의 설정이 저장됩니다. 설정 메서드는 다시 빌더를 반환하므로 필요한 옵션을 체인으로 조합할 수 있습니다.
+
+```ts
+const request = api
+  .get<User>('/users/1')
+  .auth('access-token')
+  .credentials(HTTPCredentials.INCLUDE)
+  .timeout(5000);
+```
+
+GET과 DELETE는 body 도우미가 없는 조회형 빌더를 반환합니다. POST와 PUT은 `sendJson()` 등의 body 도우미가 포함된 생성형 빌더를 반환합니다.
+
+## 3. 실행 메서드
+
+빌더를 구성하는 동안에는 네트워크 요청이 발생하지 않습니다. 다음 실행 메서드 중 하나를 호출할 때 실제 요청이 전송됩니다.
+
+| 메서드 | 반환 타입 | 설명 |
+| --- | --- | --- |
+| `toJson()` | `Promise<T>` | 응답을 JSON으로 파싱합니다. |
+| `toFormData()` | `Promise<FormData>` | 응답을 `FormData`로 파싱합니다. |
+| `toResponse()` | `Promise<Response>` | 네이티브 `Response`를 반환합니다. |
+
+```ts
+const response = await api.get('/health').toResponse();
+const user = await api.get<User>('/users/1').toJson();
+```
+
+`toJson()`의 타입 매개변수는 응답을 검증하거나 변환하지 않습니다. 서버 응답이 지정한 타입과 일치하는지는 애플리케이션에서 보장해야 합니다.
+
+## 4. 요청과 응답 타입
+
+제네릭 타입은 HTTP 메서드 또는 `api<T>()`를 호출할 때 지정합니다.
+
+```ts
+type User = {
+  id: number;
+  name: string;
+};
+
+const user = await api.get<User>('/users/1').toJson();
+```
+
+여기서 `user`의 TypeScript 타입은 `User`가 됩니다.
+
+## 5. URL 결합과 정규화
+
+클라이언트의 base URL과 요청의 API 경로는 요청 실행 시 결합됩니다. 기본 정규화 모드는 `BOUNDARY`이며, 두 URL 조각의 경계에 슬래시가 정확히 하나 존재하도록 만듭니다.
+
+```ts
+dench('https://api.example.com/')
+  .get('/users');
+
+// 요청 URL: https://api.example.com/users
+```
+
+사용 가능한 모드는 다음과 같습니다.
+
+| 모드 | 설정 방법 | 동작 |
+| --- | --- | --- |
+| `BOUNDARY` | 기본값 또는 `.boundaryNormalize()` | base URL과 API 경계만 정리합니다. |
+| `HARD` | `.hardNormalize()` | URL 내부의 중복 슬래시와 API 끝 슬래시도 정리합니다. |
+| `NONE` | `.URLNormalize(DenchURLNormalizeMode.NONE)` | 두 문자열을 정규화 없이 그대로 결합합니다. |
+
+```ts
+import { DenchURLNormalizeMode } from 'dench-fetch';
+
+const response = await api
+  .get('//path-that-keeps-slashes')
+  .URLNormalize(DenchURLNormalizeMode.NONE)
+  .toResponse();
+```
+
+의도적으로 연속 슬래시를 사용하는 API에서는 `NONE`을 명시하세요.
+
+## 6. 오류 처리
+
+네이티브 Fetch API와 달리, `dench-fetch`는 응답의 `ok`가 `false`인 경우 오류를 던집니다. 즉, 일반적으로 400~599 상태 코드는 실패로 처리됩니다.
+
+```ts
+try {
+  await api.get('/missing').toJson();
+} catch (error) {
+  console.error(error);
+}
+```
+
+`error(callback)`을 사용하면 오류가 다시 던져지기 전에 콜백을 실행할 수 있습니다.
+
+```ts
+await api
+  .get('/missing')
+  .error((error) => {
+    console.error('요청 실패:', error);
+  })
+  .toJson();
+```
+
+오류 콜백이 실행된 뒤에도 예외는 다시 던져집니다. 필요하면 호출부에서 `try...catch`로 처리해야 합니다.
+
+## 7. 빌더 재사용
+
+`copy()`는 현재 빌더의 설정을 복사한 독립적인 빌더를 반환합니다. `api()`를 함께 사용하면 공통 인증이나 timeout 설정을 여러 API 경로에 재사용할 수 있습니다.
+
+```ts
+const common = api
+  .get()
+  .auth('access-token')
+  .timeout(3000);
+
+const usersRequest = common.copy().api<User[]>('/users');
+const postsRequest = common.copy().api<Post[]>('/posts');
+
+const [users, posts] = await Promise.all([
+  usersRequest.toJson(),
+  postsRequest.toJson(),
+]);
+```
+
+`AbortController`는 한 번 중단되면 다시 사용할 수 없습니다. `abort()`가 설정된 빌더를 재사용할 때는 새로운 컨트롤러를 설정하세요.

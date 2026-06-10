@@ -1,0 +1,32 @@
+---
+sidebar_position: 2
+---
+
+# DenchURLNormalizeMode
+
+## 어떤 enum인가요?
+
+base URL과 API 경로를 결합할 때 적용할 URL 정규화 방식을 지정하는 숫자 enum입니다.
+
+새 요청 빌더의 기본 정규화 모드는 `BOUNDARY`입니다.
+
+## Values
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `NONE` | `0` | URL 조각을 변경하지 않고 그대로 결합합니다. |
+| `BOUNDARY` | `1` | base URL 끝과 API 경로 시작의 경계 슬래시를 하나로 정리합니다. |
+| `HARD` | `2` | 경계와 URL 내부의 중복 슬래시를 정리하고 API 경로 끝의 슬래시를 제거합니다. |
+
+## Example
+
+```ts
+import { dench, DenchURLNormalizeMode } from 'dench-fetch';
+
+const response = await dench('https://api.example.com/')
+  .get('//raw-path')
+  .URLNormalize(DenchURLNormalizeMode.NONE)
+  .toResponse();
+
+// 최종 URL: https://api.example.com///raw-path
+```

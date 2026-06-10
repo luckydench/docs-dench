@@ -1,0 +1,50 @@
+---
+sidebar_position: 5
+---
+
+# delete()
+
+## 함수 시그니처
+
+```ts
+delete: <T>(api?: string) => DenchGetBuilder<T>
+```
+
+## 관련 RequestInit 속성
+
+```ts
+{
+  method: 'DELETE'
+}
+```
+
+## 설명
+
+DELETE 요청을 구성하는 `DenchGetBuilder<T>`를 반환합니다. `api`를 생략하면 빈 API 경로가 사용됩니다.
+
+서버가 JSON 응답을 반환한다면 제네릭 `T`를 지정하고 `toJson()`으로 받을 수 있습니다. 응답 body가 필요하지 않다면 `toResponse()`를 사용하세요.
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+await api
+  .delete('/users/1')
+  .toResponse();
+```
+
+실행되는 요청은 다음과 같습니다.
+
+```ts
+fetch('https://api.example.com/users/1', {
+  method: 'DELETE',
+});
+```
+
+## 주의사항
+
+- `delete()`는 `DenchGetBuilder<T>`를 반환하므로 요청 body 전송 메서드를 제공하지 않습니다.
+- `delete()` 호출만으로는 요청이 실행되지 않습니다.

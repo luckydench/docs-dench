@@ -1,0 +1,260 @@
+---
+sidebar_position: 4
+---
+
+# 기본 사용법 (Basic Usage)
+
+이 문서에서는 클라이언트를 만들고 일반적인 HTTP 요청을 작성하는 방법을 단계별로 설명합니다.
+
+## 클라이언트 생성
+
+먼저 API 서버의 base URL로 클라이언트를 만듭니다.
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+```
+
+생성한 `api`는 같은 base URL을 사용하는 모든 요청에서 재사용할 수 있습니다.
+
+## GET 요청
+
+`get<T>()`에 API 경로와 예상 JSON 응답 타입을 지정하고 `toJson()`으로 실행합니다.
+
+```ts
+type Post = {
+  id: number;
+  title: string;
+  body: string;
+};
+
+const post = await api
+  .get<Post>('/posts/1')
+  .toJson();
+```
+
+JSON 파싱이 필요하지 않다면 `toResponse()`로 네이티브 `Response`를 받을 수 있습니다.
+
+```ts
+const response = await api
+  .get('/health')
+  .toResponse();
+
+console.log(response.status);
+```
+
+## POST 요청
+
+POST와 PUT 요청의 body는 `sendJson()`과 같은 body 도우미에 전달합니다.
+
+```ts
+type CreatedPost = {
+  id: number;
+  title: string;
+};
+
+const created = await api
+  .post<CreatedPost>('/posts')
+  .sendJson({
+    title: '새 게시글',
+    body: '게시글 내용',
+  })
+  .toJson();
+```
+
+`sendJson(data)`는 데이터를 `JSON.stringify()`로 직렬화하고 `Content-Type: application/json` 헤더를 설정합니다.
+
+## PUT 요청
+
+```ts
+const updated = await api
+  .put<Post>('/posts/1')
+  .sendJson({
+    title: '수정된 제목',
+    body: '수정된 내용',
+  })
+  .toJson();
+```
+
+## DELETE 요청
+
+```ts
+await api
+  .delete('/posts/1')
+  .toResponse();
+```
+
+DELETE 요청은 조회형 빌더를 사용하므로 body 도우미를 제공하지 않습니다.
+
+## 다양한 body 형식
+
+POST와 PUT 빌더는 데이터 형식에 맞는 body 도우미를 제공합니다.
+
+### FormData
+
+```ts
+const form = new FormData();
+form.append('name', 'dench');
+form.append('file', file);
+
+await api
+  .post('/uploads')
+  .sendForm(form)
+  .toResponse();
+```
+
+`sendForm()`에는 반드시 `FormData` 인스턴스를 전달해야 합니다. multipart boundary를 브라우저가 설정할 수 있도록 `Content-Type` 헤더는 자동으로 추가하지 않습니다.
+
+### Blob
+
+```ts
+const blob = new Blob(['binary data']);
+
+await api
+  .post('/files')
+  .sendBlob(blob)
+  .toResponse();
+```
+
+### URL 인코딩 데이터
+
+```ts
+await api
+  .post('/sessions')
+  .sendUrlEncoded({
+    username: 'dench',
+    password: 'secret',
+  })
+  .toResponse();
+```
+
+`sendUrlEncoded()`는 전달받은 값을 `URLSearchParams`로 변환하고 `application/x-www-form-urlencoded` 형식으로 전송합니다.
+
+### 원시 body
+
+```ts
+await api
+  .post('/raw')
+  .sendRaw('raw body')
+  .toResponse();
+```
+
+`sendRaw()`는 `BodyInit` 값을 변환 없이 body에 넣고 `Content-Type: application/octet-stream`을 설정합니다.
+
+## 인증과 요청 옵션
+
+`auth()`는 기본적으로 Bearer 인증 헤더를 추가합니다.
+
+```ts
+const profile = await api
+  .get<Profile>('/profile')
+  .auth('access-token')
+  .toJson();
+```
+
+다른 인증 형식을 사용하려면 `DenchAuthType`을 전달합니다.
+
+```ts
+import { DenchAuthType } from 'dench-fetch';
+
+const response = await api
+  .get('/secure')
+  .auth('encoded-credentials', DenchAuthType.BASIC)
+  .toResponse();
+```
+
+쿠키를 포함하거나 Fetch API 옵션을 설정할 때는 제공되는 enum과 설정 메서드를 사용합니다.
+
+```ts
+import {
+  HTTPCache,
+  HTTPCredentials,
+  HTTPMode,
+  HTTPRedirect,
+  HTTPReferrerPolicy,
+} from 'dench-fetch';
+
+const result = await api
+  .get<Result>('/result')
+  .credentials(HTTPCredentials.INCLUDE)
+  .mode(HTTPMode.CORS)
+  .cache(HTTPCache.NO_CACHE)
+  .redirect(HTTPRedirect.FOLLOW)
+  .referrerPolicy(HTTPReferrerPolicy.NO_REFERRER)
+  .toJson();
+```
+
+## timeout과 요청 중단
+
+`timeout(ms)`는 지정한 시간이 지나면 요청을 중단합니다.
+
+```ts
+const result = await api
+  .get<Result>('/slow')
+  .timeout(5000)
+  .toJson();
+```
+
+직접 요청을 중단하려면 `AbortController`를 전달합니다.
+
+```ts
+const controller = new AbortController();
+
+const request = api
+  .get<Result>('/slow')
+  .abort(controller)
+  .toJson();
+
+controller.abort();
+
+await request;
+```
+
+`abort(controller)`와 `timeout(ms)`를 함께 사용하면 timeout 시 전달한 컨트롤러가 중단됩니다.
+
+## 오류 처리
+
+HTTP 실패 응답과 네트워크 오류는 예외로 전달됩니다.
+
+```ts
+try {
+  const post = await api.get<Post>('/posts/missing').toJson();
+} catch (error) {
+  console.error('요청 처리 실패:', error);
+}
+```
+
+공통 로깅이 필요하다면 `error()` 콜백을 등록할 수 있습니다.
+
+```ts
+const post = await api
+  .get<Post>('/posts/1')
+  .error((error) => {
+    console.error('API 요청 실패:', error);
+  })
+  .toJson();
+```
+
+`error()` 콜백은 오류를 소비하지 않습니다. 콜백 실행 후 동일한 오류가 다시 던져집니다.
+
+## 공통 설정 재사용
+
+공통 설정을 가진 빌더를 만든 뒤 `copy()`와 `api()`로 요청을 분기할 수 있습니다.
+
+```ts
+const authenticated = api
+  .get()
+  .auth('access-token')
+  .timeout(3000);
+
+const users = authenticated.copy().api<User[]>('/users');
+const posts = authenticated.copy().api<Post[]>('/posts');
+
+const [userList, postList] = await Promise.all([
+  users.toJson(),
+  posts.toJson(),
+]);
+```
+
+이 패턴을 사용하면 인증이나 timeout을 요청마다 반복하지 않으면서 각 요청의 경로와 응답 타입을 독립적으로 지정할 수 있습니다.

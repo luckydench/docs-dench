@@ -1,0 +1,75 @@
+---
+sidebar_position: 13
+---
+
+# URLNormalize()
+
+## 함수 시그니처
+
+```ts
+URLNormalize: (normalizeMode: DenchURLNormalizeMode) => R
+```
+
+## 설명
+
+요청에 적용할 URL 정규화 모드를 직접 설정합니다.
+
+```ts
+enum DenchURLNormalizeMode {
+  NONE,
+  BOUNDARY,
+  HARD,
+}
+```
+
+| 모드 | 동작 |
+| --- | --- |
+| `DenchURLNormalizeMode.NONE` | base URL과 API 경로를 변경하지 않고 그대로 결합합니다. |
+| `DenchURLNormalizeMode.BOUNDARY` | 두 URL 조각의 경계 슬래시를 하나로 정리합니다. 기본값입니다. |
+| `DenchURLNormalizeMode.HARD` | 경계와 URL 내부의 중복 슬래시를 정리하고 API 경로 끝의 슬래시를 제거합니다. |
+
+```ts
+{
+  URLNormalize: normalizeMode
+}
+```
+
+`URLNormalize()`는 `RequestInit`이나 Header를 변경하지 않습니다. 선택한 모드는 요청 실행 시 최종 URL을 구성하는 데 사용됩니다.
+
+## 예제
+
+연속 슬래시를 그대로 유지하려면 `NONE`을 지정합니다.
+
+```ts
+import { dench, DenchURLNormalizeMode } from 'dench-fetch';
+
+const response = await dench('https://api.example.com/')
+  .get('//special-path')
+  .URLNormalize(DenchURLNormalizeMode.NONE)
+  .toResponse();
+```
+
+정규화 없이 두 문자열을 그대로 결합하므로 최종 요청은 다음과 같습니다.
+
+```ts
+fetch('https://api.example.com///special-path', {
+  method: 'GET',
+});
+```
+
+동일한 입력에 `BOUNDARY`를 지정하면 경계 슬래시가 하나로 정리됩니다.
+
+```ts
+const response = await dench('https://api.example.com/')
+  .get('//special-path')
+  .URLNormalize(DenchURLNormalizeMode.BOUNDARY)
+  .toResponse();
+
+// 최종 URL: https://api.example.com/special-path
+```
+
+## 주의사항
+
+- 새 요청 빌더의 기본 모드는 `DenchURLNormalizeMode.BOUNDARY`입니다.
+- 현재 런타임 구현에서는 매개변수를 생략하면 `BOUNDARY`가 사용되지만, 공개 타입 시그니처에서는 `normalizeMode`가 필수입니다.
+- `NONE`은 잘못된 경계 슬래시도 수정하지 않으므로 최종 URL을 직접 관리해야 합니다.
