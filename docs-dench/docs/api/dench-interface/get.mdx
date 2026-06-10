@@ -1,0 +1,55 @@
+---
+sidebar_position: 2
+---
+
+# get()
+
+## 함수 시그니처
+
+```ts
+get: <T>(api?: string) => DenchGetBuilder<T>
+```
+
+## 관련 RequestInit 속성
+
+```ts
+{
+  method: 'GET'
+}
+```
+
+## 설명
+
+GET 요청을 구성하는 `DenchGetBuilder<T>`를 반환합니다. `api`는 base URL 뒤에 결합할 API 경로이며, 생략하면 빈 문자열이 사용됩니다.
+
+제네릭 `T`는 이후 `toJson()`으로 반환받을 JSON 응답의 TypeScript 타입입니다.
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+type User = {
+  id: number;
+  name: string;
+};
+
+const api = dench('https://api.example.com');
+const request = api.get<User>('/users/1');
+
+const user = await request.toJson();
+```
+
+실행되는 요청은 다음과 같습니다.
+
+```ts
+fetch('https://api.example.com/users/1', {
+  method: 'GET',
+});
+```
+
+## 주의사항
+
+- `get()`을 호출하는 것만으로는 요청이 실행되지 않습니다. 실행 메서드를 호출해야 합니다.
+- `T`는 컴파일 타임 타입이며 실제 JSON 응답을 런타임에서 검증하지 않습니다.
+- GET 빌더는 요청 body 전송 메서드를 제공하지 않습니다.
