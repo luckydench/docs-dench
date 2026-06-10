@@ -1,3 +1,67 @@
+---
+sidebar_position: 2
+---
+
 # 설치 (Installation)
 
-dench-fetch를 프로젝트에 설치하는 방법에 대해 설명합니다.
+## 패키지 설치
+
+사용 중인 패키지 매니저로 `dench-fetch`를 설치합니다.
+
+```bash npm2yarn
+npm install dench-fetch
+```
+
+베타 버전을 설치하려면 `beta` 태그를 지정합니다.
+
+```bash npm2yarn
+npm install dench-fetch@beta
+```
+
+## 런타임 요구사항
+
+`dench-fetch`는 런타임 의존성 없이 전역 Fetch API를 사용합니다. 따라서 실행 환경에서 다음 웹 API를 사용할 수 있어야 합니다.
+
+- `fetch`
+- `Response`
+- `FormData`와 `Blob`을 사용하는 경우 해당 웹 API
+- `abort()` 또는 `timeout()`을 사용하는 경우 `AbortController`와 `AbortSignal`
+
+최신 브라우저에서는 일반적으로 별도 설정 없이 사용할 수 있습니다. Node.js에서는 전역 Fetch API가 제공되는 버전을 사용해야 합니다. 프로젝트가 오래된 런타임을 지원한다면 필요한 웹 API를 직접 polyfill해야 합니다.
+
+## 첫 클라이언트 만들기
+
+패키지를 설치한 뒤 `dench` 함수를 가져와 API의 base URL을 전달합니다.
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+```
+
+base URL은 프로토콜을 포함해야 합니다. TypeScript에서는 다음 형태의 URL을 허용합니다.
+
+- `http://`
+- `https://`
+- `file://`
+- `ftp://`
+- `ws://`
+- `wss://`
+
+일반적인 HTTP API 클라이언트에는 `http://` 또는 `https://` URL을 사용하세요.
+
+## 설치 확인
+
+다음 요청으로 설치와 import가 정상적으로 동작하는지 확인할 수 있습니다.
+
+```ts
+import { dench } from 'dench-fetch';
+
+const response = await dench('https://api.example.com')
+  .get('/health')
+  .toResponse();
+
+console.log(response.status);
+```
+
+`toResponse()`를 호출하는 순간 실제 네트워크 요청이 실행됩니다. 서버가 400~599 상태 코드를 반환하면 `dench-fetch`는 오류를 던집니다.
