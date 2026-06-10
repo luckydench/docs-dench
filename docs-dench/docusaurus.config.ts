@@ -93,6 +93,10 @@ const config: Config = {
           label: 'Tutorial',
         },
         {
+          type : 'docsVersionDropdown',
+          position : 'right'
+        },
+        {
           type : "localeDropdown",
           position : 'right',
         },
