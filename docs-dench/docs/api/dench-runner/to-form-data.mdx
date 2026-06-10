@@ -1,0 +1,55 @@
+---
+sidebar_position: 3
+---
+
+# toFormData()
+
+## 함수 시그니처
+
+```ts
+toFormData: () => Promise<FormData>
+```
+
+## 설명
+
+현재 빌더에 구성된 설정으로 `fetch()` 요청을 실행하고, 응답에 네이티브 `Response.formData()`를 호출하여 `FormData` 객체를 반환합니다.
+
+`multipart/form-data` 또는 `application/x-www-form-urlencoded` 형식의 응답을 파싱할 때 사용할 수 있습니다.
+
+`toFormData()` 자체는 새로운 `RequestInit` 또는 Header 속성을 추가하지 않습니다.
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+const formData = await api
+  .get('/profile-form')
+  .toFormData();
+
+console.log(formData.get('name'));
+```
+
+실행되는 요청의 `RequestInit`은 다음과 같습니다.
+
+```ts
+{
+  method: 'GET',
+}
+```
+
+응답은 내부적으로 다음과 같이 처리됩니다.
+
+```ts
+const response = await fetch(url, requestInit);
+const formData = await response.formData();
+```
+
+## 주의사항
+
+- 응답의 `Content-Type`이 `Response.formData()`가 처리할 수 있는 형식이어야 합니다.
+- 응답 형식이 올바르지 않으면 `Response.formData()`에서 오류가 발생할 수 있습니다.
+- 응답의 `ok`가 `false`이면 FormData를 파싱하지 않고 HTTP 실패 오류를 던집니다.
+- 같은 빌더에서 `toFormData()`를 다시 호출하면 새로운 요청을 실행합니다.

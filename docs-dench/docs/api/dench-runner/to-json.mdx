@@ -1,0 +1,62 @@
+---
+sidebar_position: 2
+---
+
+# toJson()
+
+## 함수 시그니처
+
+```ts
+toJson: () => Promise<T>
+```
+
+## 설명
+
+현재 빌더에 구성된 설정으로 `fetch()` 요청을 실행하고, 응답에 네이티브 `Response.json()`을 호출하여 JSON 값을 반환합니다.
+
+반환 타입 `T`는 `get<T>()`, `post<T>()`, `put<T>()`, `delete<T>()` 또는 `api<T>()`에서 지정한 타입입니다.
+
+`toJson()` 자체는 새로운 `RequestInit` 또는 Header 속성을 추가하지 않습니다.
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+type User = {
+  id: number;
+  name: string;
+};
+
+const api = dench('https://api.example.com');
+
+const user = await api
+  .get<User>('/users/1')
+  .auth('access-token')
+  .toJson();
+```
+
+실행되는 요청의 `RequestInit`과 Header는 다음과 같습니다.
+
+```ts
+{
+  method: 'GET',
+  headers: {
+    Authorization: 'Bearer access-token',
+  },
+}
+```
+
+응답은 내부적으로 다음과 같이 처리됩니다.
+
+```ts
+const response = await fetch(url, requestInit);
+const user = await response.json() as User;
+```
+
+## 주의사항
+
+- `T`는 TypeScript 컴파일 타임 타입이며, 응답 JSON이 실제로 `T`와 일치하는지 런타임에서 검증하지 않습니다.
+- 응답 body가 올바른 JSON이 아니거나 비어 있다면 `Response.json()`에서 오류가 발생합니다.
+- 응답의 `ok`가 `false`이면 JSON을 파싱하지 않고 HTTP 실패 오류를 던집니다.
+- 같은 빌더에서 `toJson()`을 다시 호출하면 기존 응답을 재사용하지 않고 새로운 요청을 실행합니다.

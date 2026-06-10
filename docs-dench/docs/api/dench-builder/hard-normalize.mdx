@@ -1,0 +1,63 @@
+---
+sidebar_position: 12
+---
+
+# hardNormalize()
+
+## 함수 시그니처
+
+```ts
+hardNormalize: () => R
+```
+
+## 설명
+
+URL 정규화 모드를 `DenchURLNormalizeMode.HARD`로 설정합니다.
+
+요청 실행 시 먼저 base URL과 API 경로의 경계를 정규화한 뒤 다음 처리를 추가로 수행합니다.
+
+- 프로토콜 구분자 뒤를 제외한 base URL 내부의 중복 슬래시를 하나로 변경
+- API 경로 내부의 중복 슬래시를 하나로 변경
+- API 경로 끝의 슬래시 제거
+
+```ts
+{
+  URLNormalize: DenchURLNormalizeMode.HARD
+}
+```
+
+`hardNormalize()`는 `RequestInit`이나 Header를 변경하지 않습니다. 정규화된 URL은 `fetch()`의 첫 번째 인자로 사용됩니다.
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+const response = await dench('https://api.example.com//v1///')
+  .get('//users///1/')
+  .hardNormalize()
+  .toResponse();
+```
+
+요청 실행 전 URL 조각은 다음과 같이 정규화됩니다.
+
+```ts
+{
+  baseURL: 'https://api.example.com/v1',
+  api: '/users/1',
+}
+```
+
+최종 요청은 다음과 같습니다.
+
+```ts
+fetch('https://api.example.com/v1/users/1', {
+  method: 'GET',
+});
+```
+
+## 주의사항
+
+- 연속 슬래시 또는 API 경로 끝의 슬래시가 서버에서 의미를 가진다면 사용하지 마세요.
+- 서명된 URL처럼 원본 경로 문자열이 정확히 유지되어야 하는 요청에는 적합하지 않습니다.
+- 일반적인 base URL과 API 경로 결합에는 기본 모드인 `BOUNDARY`로 충분합니다.

@@ -1,0 +1,71 @@
+---
+sidebar_position: 11
+---
+
+# boundaryNormalize()
+
+## 함수 시그니처
+
+```ts
+boundaryNormalize: () => R
+```
+
+## 설명
+
+URL 정규화 모드를 `DenchURLNormalizeMode.BOUNDARY`로 설정합니다.
+
+요청 실행 시 base URL 끝의 슬래시를 모두 제거하고, API 경로 시작의 슬래시를 정확히 하나로 만듭니다. base URL과 API 경로 내부에 있는 중복 슬래시는 변경하지 않습니다.
+
+`BOUNDARY`는 새 요청 빌더의 기본 URL 정규화 모드입니다.
+
+```ts
+{
+  URLNormalize: DenchURLNormalizeMode.BOUNDARY
+}
+```
+
+`boundaryNormalize()`는 `RequestInit`이나 Header를 변경하지 않습니다. 정규화된 URL은 `fetch()`의 첫 번째 인자로 사용됩니다.
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+const response = await dench('https://api.example.com///')
+  .get('///users')
+  .boundaryNormalize()
+  .toResponse();
+```
+
+요청 실행 전 URL 조각은 다음과 같이 정규화됩니다.
+
+```ts
+{
+  baseURL: 'https://api.example.com',
+  api: '/users',
+}
+```
+
+최종 요청은 다음과 같습니다.
+
+```ts
+fetch('https://api.example.com/users', {
+  method: 'GET',
+});
+```
+
+URL 내부의 중복 슬래시는 유지됩니다.
+
+```ts
+dench('https://api.example.com//v1/')
+  .get('/users//1')
+  .boundaryNormalize();
+
+// 최종 URL: https://api.example.com//v1/users//1
+```
+
+## 주의사항
+
+- 경계에 연속 슬래시를 의도적으로 사용해야 한다면 `DenchURLNormalizeMode.NONE`을 사용하세요.
+- API 경로가 빈 문자열이면 정규화 후 `/`가 되어 base URL의 루트 경로를 요청합니다.
+- URL 내부의 중복 슬래시까지 정리하려면 `hardNormalize()`를 사용하세요.
