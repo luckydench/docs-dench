@@ -1,0 +1,8 @@
+{
+  "label": "Types",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "dench-fetch가 공개하는 TypeScript 타입과 인터페이스입니다."
+  }
+}
