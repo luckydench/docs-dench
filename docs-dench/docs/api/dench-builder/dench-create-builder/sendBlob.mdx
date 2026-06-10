@@ -1,0 +1,58 @@
+---
+sidebar_position: 3
+---
+
+# sendBlob()
+
+## 함수 시그니처
+
+```ts
+sendBlob: (data?: Blob) => DenchCreateBuilder<T>
+```
+
+## 관련 RequestInit 및 Header 속성
+
+```ts
+{
+  headers: {
+    'Content-Type': 'application/octet-stream',
+  },
+  body: data,
+}
+```
+
+## 설명
+
+`Blob` 데이터를 요청 body로 설정하고 `Content-Type: application/octet-stream` 헤더를 추가합니다. `data`를 생략하면 현재 빌더의 `config.options.body`를 사용합니다.
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+const blob = new Blob(['binary data']);
+
+const response = await dench('https://api.example.com')
+  .post('/files')
+  .sendBlob(blob)
+  .toResponse();
+```
+
+실제 `RequestInit`과 Header는 다음과 같습니다.
+
+```ts
+{
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/octet-stream',
+  },
+  body: blob,
+}
+```
+
+## 주의사항
+
+- 공개 타입은 `Blob`을 요구하지만, 현재 런타임 구현은 값이 실제 `Blob`인지 검사하지 않습니다.
+- `Blob` 자체의 MIME 타입과 관계없이 Content-Type을 `application/octet-stream`으로 설정합니다.
+- 현재 실제 구현은 `post(api, data)`와 `put(api, data)`의 두 번째 인자를 저장하지 않습니다. body는 `sendBlob(data)`에 직접 전달하세요.
+- 이미 설정된 body와 `Content-Type` 헤더를 덮어씁니다.

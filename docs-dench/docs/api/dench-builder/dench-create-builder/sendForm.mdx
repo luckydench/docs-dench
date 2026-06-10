@@ -1,0 +1,55 @@
+---
+sidebar_position: 2
+---
+
+# sendForm()
+
+## 함수 시그니처
+
+```ts
+sendForm: (data?: FormData) => DenchCreateBuilder<T>
+```
+
+## 관련 RequestInit 속성
+
+```ts
+{
+  body: data
+}
+```
+
+## 설명
+
+`FormData` 인스턴스를 요청 body로 설정합니다. `data`를 생략하면 현재 빌더의 `config.options.body`를 사용하며, 해당 값이 `FormData`가 아니면 즉시 오류를 던집니다.
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+const formData = new FormData();
+formData.append('name', 'Dench');
+formData.append('file', file);
+
+const response = await dench('https://api.example.com')
+  .post('/uploads')
+  .sendForm(formData)
+  .toResponse();
+```
+
+실제 `RequestInit`은 다음과 같습니다.
+
+```ts
+{
+  method: 'POST',
+  headers: {},
+  body: formData,
+}
+```
+
+## 주의사항
+
+- `data`는 반드시 `FormData` 인스턴스여야 합니다.
+- 현재 구현은 `Content-Type: multipart/form-data`를 직접 설정하지 않습니다. 실행 환경이 boundary를 포함한 Content-Type 헤더를 자동으로 생성합니다.
+- 현재 실제 구현은 `post(api, data)`와 `put(api, data)`의 두 번째 인자를 저장하지 않습니다. `FormData`는 `sendForm(data)`에 직접 전달하세요.
+- 이미 설정된 body를 덮어씁니다.
