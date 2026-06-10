@@ -1,0 +1,35 @@
+---
+sidebar_position: 5
+---
+
+# HTTPReferrerPolicy
+
+## 어떤 enum인가요?
+
+Fetch API의 `RequestInit.referrerPolicy` 값을 지정하는 문자열 enum입니다. 요청의 `Referer` 헤더에 포함할 출처 정보의 범위를 제어합니다.
+
+## Values
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `NO_REFERRER` | `'no-referrer'` | `Referer` 헤더를 전송하지 않습니다. |
+| `NO_REFERRER_WHEN_DOWNGRADE` | `'no-referrer-when-downgrade'` | 보안 수준이 낮아지는 요청에는 referrer를 전송하지 않습니다. |
+| `ORIGIN` | `'origin'` | 출처 정보만 전송합니다. |
+| `ORIGIN_WHEN_CROSS_ORIGIN` | `'origin-when-cross-origin'` | 동일 출처에는 전체 URL, 교차 출처에는 출처만 전송합니다. |
+| `SAME_ORIGIN` | `'same-origin'` | 동일 출처 요청에만 referrer를 전송합니다. |
+| `STRICT_ORIGIN` | `'strict-origin'` | 보안 수준이 유지되는 경우에만 출처를 전송합니다. |
+| `STRICT_ORIGIN_WHEN_CROSS_ORIGIN` | `'strict-origin-when-cross-origin'` | 동일 출처에는 전체 URL을 사용하고, 안전한 교차 출처에는 출처만 전송합니다. |
+| `UNSAFE_URL` | `'unsafe-url'` | 가능한 경우 전체 URL을 전송합니다. |
+
+## Example
+
+```ts
+import { dench, HTTPReferrerPolicy } from 'dench-fetch';
+
+const response = await dench('https://api.example.com')
+  .get('/resource')
+  .referrerPolicy(HTTPReferrerPolicy.NO_REFERRER)
+  .toResponse();
+
+// RequestInit: { method: 'GET', referrerPolicy: 'no-referrer' }
+```

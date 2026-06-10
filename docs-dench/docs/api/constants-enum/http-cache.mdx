@@ -1,0 +1,33 @@
+---
+sidebar_position: 4
+---
+
+# HTTPCache
+
+## 어떤 enum인가요?
+
+Fetch API의 `RequestInit.cache` 값을 지정하는 문자열 enum입니다. 요청이 브라우저의 HTTP 캐시를 사용하는 방식을 설정합니다.
+
+## Values
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `NO_CACHE` | `'no-cache'` | 저장된 응답을 사용하기 전에 서버에서 유효성을 재검증합니다. |
+| `NO_STORE` | `'no-store'` | 캐시를 조회하지 않고 응답도 캐시에 저장하지 않습니다. |
+| `RELOAD` | `'reload'` | 캐시를 조회하지 않고 서버 응답으로 캐시를 갱신합니다. |
+| `FORCE_CACHE` | `'force-cache'` | 캐시된 응답을 우선 사용합니다. |
+| `ONLY_IF_CACHED` | `'only-if-cached'` | 캐시에 존재하는 응답만 사용합니다. |
+| `DEFAULT` | `'default'` | 실행 환경의 기본 HTTP 캐시 동작을 사용합니다. |
+
+## Example
+
+```ts
+import { dench, HTTPCache } from 'dench-fetch';
+
+const users = await dench('https://api.example.com')
+  .get('/users')
+  .cache(HTTPCache.NO_CACHE)
+  .toJson();
+
+// RequestInit: { method: 'GET', cache: 'no-cache' }
+```
