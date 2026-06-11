@@ -1,0 +1,68 @@
+{
+  "homepage.meta.title": {
+    "message": "{siteTitle} | TypeScript Fetch Request Builder"
+  },
+  "homepage.meta.description": {
+    "message": "A TypeScript HTTP request builder that organizes the native Fetch API into readable chains"
+  },
+  "homepage.hero.title.first": {
+    "message": "Readable requests,"
+  },
+  "homepage.hero.title.second": {
+    "message": "explicit execution."
+  },
+  "homepage.hero.description": {
+    "message": "dench-fetch keeps the flexibility of the native Fetch API while organizing repetitive request options into short, type-safe chains."
+  },
+  "homepage.hero.getStarted": {
+    "message": "Get started"
+  },
+  "homepage.hero.meta.fetch": {
+    "message": "Built on Fetch API"
+  },
+  "homepage.hero.meta.types": {
+    "message": "Type support"
+  },
+  "homepage.hero.meta.execution": {
+    "message": "Explicit execution"
+  },
+  "homepage.features.heading.first": {
+    "message": "Keep the power of fetch,"
+  },
+  "homepage.features.heading.second": {
+    "message": "with a lighter authoring experience."
+  },
+  "homepage.features.description": {
+    "message": "dench-fetch is a TypeScript request builder built on the native Fetch API. Compose requests with short, readable chains instead of complex configuration objects, then execute them explicitly when needed."
+  },
+  "homepage.features.readable.title": {
+    "message": "Requests read like their intent"
+  },
+  "homepage.features.readable.description": {
+    "message": "Write the request flow naturally from top to bottom, from the HTTP method through authentication, timeout, and response format."
+  },
+  "homepage.features.runner.title": {
+    "message": "Make the execution point explicit"
+  },
+  "homepage.features.runner.description": {
+    "message": "Building a request does not send it. The actual fetch runs only when you select the response format."
+  },
+  "homepage.features.body.title": {
+    "message": "Choose body formats without the boilerplate"
+  },
+  "homepage.features.body.description": {
+    "message": "Set JSON, FormData, Blob, URL-encoded data, or a raw body with a method designed for that format."
+  },
+  "homepage.features.reusable.title": {
+    "message": "Configure shared options once"
+  },
+  "homepage.features.reusable.description": {
+    "message": "Copy a builder with authentication and timeout settings, then change only the API path to reduce repetition."
+  },
+  "homepage.features.result.title": {
+    "message": "The request that gets created"
+  },
+  "homepage.features.docsLink": {
+    "message": "Start with the docs"
+  }
+}

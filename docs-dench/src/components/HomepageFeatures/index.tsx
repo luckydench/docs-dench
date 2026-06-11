@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
+import Translate, {translate} from '@docusaurus/Translate';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
@@ -15,49 +16,57 @@ const FeatureList: FeatureItem[] = [
   {
     icon: '01',
     eyebrow: 'READABLE CHAIN',
-    title: '요청의 의도가 그대로 읽힙니다',
-    description: (
-      <>
-        HTTP 메서드부터 인증, 제한 시간, 응답 형식까지 요청의 흐름을
-        위에서 아래로 자연스럽게 작성합니다.
-      </>
-    ),
+    title: translate({
+      id: 'homepage.features.readable.title',
+      message: '요청의 의도가 그대로 읽힙니다',
+    }),
+    description: translate({
+      id: 'homepage.features.readable.description',
+      message:
+        'HTTP 메서드부터 인증, 제한 시간, 응답 형식까지 요청의 흐름을 위에서 아래로 자연스럽게 작성합니다.',
+    }),
     code: ".get<User>('/users/1')\n.auth(token)\n.timeout(3000)\n.toJson()",
   },
   {
     icon: '02',
     eyebrow: 'EXPLICIT RUNNER',
-    title: '실행 시점은 마지막에 명확하게',
-    description: (
-      <>
-        빌더를 구성하는 동안 요청은 전송되지 않습니다. 원하는 응답 형식을
-        선택하는 순간 실제 <code>fetch</code>가 실행됩니다.
-      </>
-    ),
+    title: translate({
+      id: 'homepage.features.runner.title',
+      message: '실행 시점은 마지막에 명확하게',
+    }),
+    description: translate({
+      id: 'homepage.features.runner.description',
+      message:
+        '빌더를 구성하는 동안 요청은 전송되지 않습니다. 원하는 응답 형식을 선택하는 순간 실제 fetch가 실행됩니다.',
+    }),
     code: '.toJson()\n.toResponse()\n.toFormData()',
   },
   {
     icon: '03',
     eyebrow: 'BODY HELPERS',
-    title: 'body 형식도 고민 없이',
-    description: (
-      <>
-        JSON, FormData, Blob, URL encoded 데이터와 원시 body를 목적에 맞는
-        메서드로 설정할 수 있습니다.
-      </>
-    ),
+    title: translate({
+      id: 'homepage.features.body.title',
+      message: 'body 형식도 고민 없이',
+    }),
+    description: translate({
+      id: 'homepage.features.body.description',
+      message:
+        'JSON, FormData, Blob, URL encoded 데이터와 원시 body를 목적에 맞는 메서드로 설정할 수 있습니다.',
+    }),
     code: '.sendJson(data)\n.sendForm(form)\n.sendBlob(blob)',
   },
   {
     icon: '04',
     eyebrow: 'REUSABLE BUILDER',
-    title: '공통 설정은 한 번만',
-    description: (
-      <>
-        인증과 timeout을 가진 빌더를 복사하고 API 경로만 바꿔 반복 설정을
-        줄일 수 있습니다.
-      </>
-    ),
+    title: translate({
+      id: 'homepage.features.reusable.title',
+      message: '공통 설정은 한 번만',
+    }),
+    description: translate({
+      id: 'homepage.features.reusable.description',
+      message:
+        '인증과 timeout을 가진 빌더를 복사하고 API 경로만 바꿔 반복 설정을 줄일 수 있습니다.',
+    }),
     code: "common.copy().api('/users')\ncommon.copy().api('/posts')",
   },
 ];
@@ -88,15 +97,21 @@ export default function HomepageFeatures(): ReactNode {
           <div>
             <span className={styles.sectionLabel}>FETCH, BUT FRIENDLIER</span>
             <Heading as="h2" className={styles.sectionTitle}>
-              fetch의 힘은 그대로,
+              <Translate id="homepage.features.heading.first">
+                fetch의 힘은 그대로,
+              </Translate>
               <br />
-              작성 경험은 더 가볍게.
+              <Translate id="homepage.features.heading.second">
+                작성 경험은 더 가볍게.
+              </Translate>
             </Heading>
           </div>
           <p className={styles.sectionDescription}>
-            dench-fetch는 네이티브 Fetch API 위에 만들어진 TypeScript 요청
-            빌더입니다. 복잡한 설정 객체 대신 짧고 읽기 쉬운 체인으로 요청을
-            구성하고, 필요한 순간에 명확하게 실행하세요.
+            <Translate id="homepage.features.description">
+              dench-fetch는 네이티브 Fetch API 위에 만들어진 TypeScript 요청
+              빌더입니다. 복잡한 설정 객체 대신 짧고 읽기 쉬운 체인으로 요청을
+              구성하고, 필요한 순간에 명확하게 실행하세요.
+            </Translate>
           </p>
         </div>
 
@@ -137,7 +152,11 @@ export default function HomepageFeatures(): ReactNode {
 
           <div className={styles.resultPanel}>
             <div className={styles.resultHeader}>
-              <span>실제로 만들어지는 요청</span>
+              <span>
+                <Translate id="homepage.features.result.title">
+                  실제로 만들어지는 요청
+                </Translate>
+              </span>
               <span className={styles.liveBadge}>
                 <i />
                 READY
@@ -178,7 +197,7 @@ export default function HomepageFeatures(): ReactNode {
           <Link
             className={styles.docsLink}
             to="/docs/denchfetch/Introduction/Introduction">
-            문서에서 시작하기
+            <Translate id="homepage.features.docsLink">문서에서 시작하기</Translate>
             <span aria-hidden="true">→</span>
           </Link>
         </div>

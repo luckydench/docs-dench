@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
+import Translate, {translate} from '@docusaurus/Translate';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
@@ -18,19 +19,23 @@ function HomepageHeader() {
             TypeScript Fetch Request Builder
           </div>
           <Heading as="h1" className={styles.heroTitle}>
-            읽기 쉬운 요청,
+            <Translate id="homepage.hero.title.first">읽기 쉬운 요청,</Translate>
             <br />
-            <span>명확한 실행.</span>
+            <span>
+              <Translate id="homepage.hero.title.second">명확한 실행.</Translate>
+            </span>
           </Heading>
           <p className={styles.heroDescription}>
-            dench-fetch는 네이티브 Fetch API의 유연함을 유지하면서,
-            반복되는 요청 설정을 짧고 타입 안전한 체인으로 정리합니다.
+            <Translate id="homepage.hero.description">
+              dench-fetch는 네이티브 Fetch API의 유연함을 유지하면서, 반복되는
+              요청 설정을 짧고 타입 안전한 체인으로 정리합니다.
+            </Translate>
           </p>
           <div className={styles.buttons}>
             <Link
               className={styles.primaryButton}
               to="/docs/denchfetch/Introduction/Introduction">
-              빠르게 시작하기
+              <Translate id="homepage.hero.getStarted">빠르게 시작하기</Translate>
               <span aria-hidden="true">→</span>
             </Link>
             <Link
@@ -40,9 +45,15 @@ function HomepageHeader() {
             </Link>
           </div>
           <div className={styles.heroMeta}>
-            <span>Fetch API 기반</span>
-            <span>타입 지원</span>
-            <span>명시적 실행</span>
+            <span>
+              <Translate id="homepage.hero.meta.fetch">Fetch API 기반</Translate>
+            </span>
+            <span>
+              <Translate id="homepage.hero.meta.types">타입 지원</Translate>
+            </span>
+            <span>
+              <Translate id="homepage.hero.meta.execution">명시적 실행</Translate>
+            </span>
           </div>
         </div>
 
@@ -90,8 +101,18 @@ export default function Home(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`${siteConfig.title} | TypeScript Fetch Request Builder`}
-      description="네이티브 Fetch API를 읽기 쉬운 체이닝 방식으로 구성하는 TypeScript HTTP 요청 빌더">
+      title={translate(
+        {
+          id: 'homepage.meta.title',
+          message: '{siteTitle} | TypeScript Fetch Request Builder',
+        },
+        {siteTitle: siteConfig.title},
+      )}
+      description={translate({
+        id: 'homepage.meta.description',
+        message:
+          '네이티브 Fetch API를 읽기 쉬운 체이닝 방식으로 구성하는 TypeScript HTTP 요청 빌더',
+      })}>
       <HomepageHeader />
       <main>
         <HomepageFeatures />
