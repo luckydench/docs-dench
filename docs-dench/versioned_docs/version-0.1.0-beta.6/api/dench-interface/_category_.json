@@ -1,8 +1,0 @@
-{
-  "label": "DenchInterface",
-  "position": 1,
-  "link": {
-    "type": "generated-index",
-    "description": "dench()로 생성한 클라이언트의 속성과 HTTP 메서드 API입니다."
-  }
-}

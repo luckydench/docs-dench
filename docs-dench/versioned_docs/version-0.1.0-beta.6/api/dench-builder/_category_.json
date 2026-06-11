@@ -1,8 +1,0 @@
-{
-  "label": "DenchBuilder",
-  "position": 2,
-  "link": {
-    "type": "generated-index",
-    "description": "모든 요청 빌더에서 공통으로 사용하는 설정 API입니다."
-  }
-}

@@ -1,8 +1,0 @@
-{
-  "label": "DenchCreateBuilder",
-  "position": 0,
-  "link": {
-    "type": "generated-index",
-    "description": "POST와 PUT 요청의 body 및 API 경로를 구성하는 메서드입니다."
-  }
-}
