@@ -100,7 +100,6 @@ const config: Config = {
           type : "localeDropdown",
           position : 'right',
         },
-        { to: '/dench/graphql', label: 'DenchGraphQL', position: 'left' },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/luckydench/dench-fetch',
