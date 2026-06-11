@@ -1,0 +1,44 @@
+---
+sidebar_position: 4
+---
+
+# DenchGetBuilder
+
+## Summary
+
+The builder type used to configure GET and DELETE requests. It provides common builder and runner APIs without request body APIs.
+
+## Type Definition
+
+```ts
+interface DenchGetBuilder<T>
+  extends DenchBuilder<T, DenchGetBuilder<T>>,
+    DenchRunner<T> {
+  api: <P = T>(api: string) => DenchGetBuilder<P>;
+}
+```
+
+### Generics
+
+| Generic | Description |
+| --- | --- |
+| `T` | The JSON response type returned by `toJson()`. |
+| `P` | The JSON response type assigned to the new builder by `api<P>()`. Defaults to `T`. |
+
+## Properties
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `api` | `<P = T>(api: string) => DenchGetBuilder<P>` | Yes | Changes the API path and response type. |
+
+It also inherits every property from `DenchBuilder<T, DenchGetBuilder<T>>` and `DenchRunner<T>`.
+
+## Used By
+
+- Return type of `DenchInterface.get<T>()`.
+- Return type of `DenchInterface.delete<T>()`.
+- Used by the configuration and runner APIs for GET and DELETE requests.
+
+```ts
+import type { DenchGetBuilder } from 'dench-fetch';
+```

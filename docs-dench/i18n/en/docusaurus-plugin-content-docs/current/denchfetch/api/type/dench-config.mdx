@@ -1,0 +1,79 @@
+---
+sidebar_position: 5
+---
+
+# DenchConfig
+
+## Summary
+
+A configuration type used internally by request builders to manage the URL, `RequestInit`, error callback, timeout, and cancellation controller.
+
+## Type Definition
+
+```ts
+interface DenchOptions extends RequestInit {
+  method: string;
+  credentials?: HTTPCredentials;
+  signal?: AbortSignal;
+  headers?: Record<string, string>;
+  body?: BodyInit;
+  cache?: HTTPCache;
+  mode?: HTTPMode;
+  redirect?: HTTPRedirect;
+  referrerPolicy?: HTTPReferrerPolicy;
+}
+
+interface DenchBaseConfig {
+  baseURL: string;
+  api: string;
+  errorcallback?: (error: unknown) => void;
+  URLNormalize: DenchURLNormalizeMode;
+  options: DenchOptions;
+}
+
+interface DenchConfig extends DenchBaseConfig {
+  abortController?: AbortController;
+  timeout?: number;
+}
+```
+
+`DenchConfig` has no generics. `DenchOptions` and `DenchBaseConfig` are not publicly exported types, but are shown to explain the inherited properties.
+
+## Properties
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `baseURL` | `string` | Yes | The base portion of the request URL. |
+| `api` | `string` | Yes | The API path appended to the base URL. |
+| `errorcallback` | `(error: unknown) => void` | No | Callback invoked when a request error occurs. |
+| `URLNormalize` | `DenchURLNormalizeMode` | Yes | URL normalization mode applied when executing the request. |
+| `options` | `DenchOptions` | Yes | The `RequestInit` configuration passed to `fetch()`. |
+| `abortController` | `AbortController` | No | Controller used for cancellation and timeout handling. |
+| `timeout` | `number` | No | Request timeout in milliseconds. |
+
+### options Properties
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `method` | `string` | Yes | HTTP request method. |
+| `credentials` | `HTTPCredentials` | No | Fetch credentials policy. |
+| `signal` | `AbortSignal` | No | Request cancellation signal. |
+| `headers` | `Record<string, string>` | No | Request headers. |
+| `body` | `BodyInit` | No | Request body. |
+| `cache` | `HTTPCache` | No | HTTP cache policy. |
+| `mode` | `HTTPMode` | No | Request mode. |
+| `redirect` | `HTTPRedirect` | No | Redirect handling policy. |
+| `referrerPolicy` | `HTTPReferrerPolicy` | No | Referrer policy. |
+
+Because `DenchOptions` extends `RequestInit`, native `RequestInit` properties not listed in the table are also available at the type level.
+
+## Used By
+
+- Optional configuration parameter of `denchfetcher(url, config?)`.
+- Used by the internal `runfetch()`, `toJson()`, and `toFormData()` execution functions.
+- Every request configuration method reads `DenchConfig` or returns a new configuration.
+- `DenchBuilder.config` is publicly typed as `DenchBaseConfig`, so `abortController` and `timeout` are not directly exposed by that property type.
+
+```ts
+import type { DenchConfig } from 'dench-fetch';
+```

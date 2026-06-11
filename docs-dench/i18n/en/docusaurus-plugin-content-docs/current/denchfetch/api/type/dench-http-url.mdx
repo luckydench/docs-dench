@@ -1,0 +1,43 @@
+---
+sidebar_position: 7
+---
+
+# DenchHTTPURL
+
+## Summary
+
+A template literal union type that only accepts URL strings containing a supported protocol.
+
+## Type Definition
+
+```ts
+type DenchHTTPURL =
+  | `http://${string}`
+  | `https://${string}`
+  | `file://${string}`
+  | `ftp://${string}`
+  | `ws://${string}`
+  | `wss://${string}`;
+```
+
+`DenchHTTPURL` has no generics.
+
+## Properties
+
+`DenchHTTPURL` is a string union rather than an object type, so it has no properties.
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| None | - | - | The value itself is a string beginning with an allowed protocol. |
+
+## Used By
+
+- Used by the `baseURL` parameter of `dench(baseURL: DenchHTTPURL)`.
+- Used as the type of `DenchInterface.baseURL`.
+
+```ts
+import type { DenchHTTPURL } from 'dench-fetch';
+
+const productionURL: DenchHTTPURL = 'https://api.example.com';
+const localURL: DenchHTTPURL = 'http://localhost:3000';
+```

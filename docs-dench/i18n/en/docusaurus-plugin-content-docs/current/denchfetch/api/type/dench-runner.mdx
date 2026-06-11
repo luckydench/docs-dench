@@ -1,0 +1,43 @@
+---
+sidebar_position: 1
+---
+
+# DenchRunner
+
+## Summary
+
+An interface that defines runner methods for executing a configured request and returning the response in the desired format.
+
+## Type Definition
+
+```ts
+interface DenchRunner<T> {
+  toResponse: () => Promise<Response>;
+  toJson: () => Promise<T>;
+  toFormData: () => Promise<FormData>;
+}
+```
+
+### Generics
+
+| Generic | Description |
+| --- | --- |
+| `T` | The TypeScript type of the JSON response returned by `toJson()`. No runtime validation is performed. |
+
+## Properties
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `toResponse` | `() => Promise<Response>` | Yes | Executes the request and returns the native `Response`. |
+| `toJson` | `() => Promise<T>` | Yes | Executes the request and parses the response as JSON. |
+| `toFormData` | `() => Promise<FormData>` | Yes | Executes the request and parses the response as `FormData`. |
+
+## Used By
+
+- Extended by `DenchCreateBuilder<T>`.
+- Extended by `DenchGetBuilder<T>`.
+- Defines the `toResponse()`, `toJson()`, and `toFormData()` APIs for all request builders.
+
+```ts
+import type { DenchRunner } from 'dench-fetch';
+```

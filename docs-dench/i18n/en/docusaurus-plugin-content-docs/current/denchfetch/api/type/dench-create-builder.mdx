@@ -1,0 +1,54 @@
+---
+sidebar_position: 3
+---
+
+# DenchCreateBuilder
+
+## Summary
+
+The builder type used to configure POST and PUT requests. It provides common builder APIs, runner APIs, and request body configuration APIs.
+
+## Type Definition
+
+```ts
+interface DenchCreateBuilder<T>
+  extends DenchBuilder<T, DenchCreateBuilder<T>>,
+    DenchRunner<T> {
+  sendJson: (data?: unknown) => DenchCreateBuilder<T>;
+  sendForm: (data?: FormData) => DenchCreateBuilder<T>;
+  sendBlob: (data?: Blob) => DenchCreateBuilder<T>;
+  sendUrlEncoded: (data?: DenchURLSearchParams) => DenchCreateBuilder<T>;
+  sendRaw: (data?: BodyInit) => DenchCreateBuilder<T>;
+  api: <P = T>(api: string) => DenchCreateBuilder<P>;
+}
+```
+
+### Generics
+
+| Generic | Description |
+| --- | --- |
+| `T` | The JSON response type returned by `toJson()`. |
+| `P` | The JSON response type assigned to the new builder by `api<P>()`. Defaults to `T`. |
+
+## Properties
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `sendJson` | `(data?: unknown) => DenchCreateBuilder<T>` | Yes | Sets a JSON body and Content-Type header. |
+| `sendForm` | `(data?: FormData) => DenchCreateBuilder<T>` | Yes | Sets a `FormData` body. |
+| `sendBlob` | `(data?: Blob) => DenchCreateBuilder<T>` | Yes | Sets a Blob body. |
+| `sendUrlEncoded` | `(data?: DenchURLSearchParams) => DenchCreateBuilder<T>` | Yes | Sets a URL-encoded body. |
+| `sendRaw` | `(data?: BodyInit) => DenchCreateBuilder<T>` | Yes | Sets a raw `BodyInit` body. |
+| `api` | `<P = T>(api: string) => DenchCreateBuilder<P>` | Yes | Changes the API path and response type. |
+
+It also inherits every property from `DenchBuilder<T, DenchCreateBuilder<T>>` and `DenchRunner<T>`.
+
+## Used By
+
+- Return type of `DenchInterface.post<T>()`.
+- Return type of `DenchInterface.put<T>()`.
+- Used by the body configuration and runner APIs for POST and PUT requests.
+
+```ts
+import type { DenchCreateBuilder } from 'dench-fetch';
+```

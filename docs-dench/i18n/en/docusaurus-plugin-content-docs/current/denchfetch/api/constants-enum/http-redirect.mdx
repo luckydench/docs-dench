@@ -1,0 +1,30 @@
+---
+sidebar_position: 6
+---
+
+# HTTPRedirect
+
+## What Is This Enum?
+
+A string enum representing Fetch API `RequestInit.redirect` values. It configures how redirect responses from the server are handled.
+
+## Values
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `FOLLOW` | `'follow'` | Automatically follows redirects. |
+| `ERROR` | `'error'` | Treats a redirect response as an error. |
+| `MANUAL` | `'manual'` | Does not automatically follow redirects. |
+
+## Example
+
+```ts
+import { dench, HTTPRedirect } from 'dench-fetch';
+
+const response = await dench('https://api.example.com')
+  .get('/redirected-resource')
+  .redirect(HTTPRedirect.MANUAL)
+  .toResponse();
+
+// RequestInit: { method: 'GET', redirect: 'manual' }
+```

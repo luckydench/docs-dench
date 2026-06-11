@@ -1,0 +1,32 @@
+---
+sidebar_position: 2
+---
+
+# DenchURLNormalizeMode
+
+## What Is This Enum?
+
+A numeric enum that selects the URL normalization strategy applied when combining a base URL and API path.
+
+The default normalization mode for a new request builder is `BOUNDARY`.
+
+## Values
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `NONE` | `0` | Combines URL fragments without modifying them. |
+| `BOUNDARY` | `1` | Reduces the boundary slashes between the end of the base URL and the start of the API path to one. |
+| `HARD` | `2` | Normalizes duplicate slashes at the boundary and inside the URL, and removes trailing slashes from the API path. |
+
+## Example
+
+```ts
+import { dench, DenchURLNormalizeMode } from 'dench-fetch';
+
+const response = await dench('https://api.example.com/')
+  .get('//raw-path')
+  .URLNormalize(DenchURLNormalizeMode.NONE)
+  .toResponse();
+
+// Final URL: https://api.example.com///raw-path
+```

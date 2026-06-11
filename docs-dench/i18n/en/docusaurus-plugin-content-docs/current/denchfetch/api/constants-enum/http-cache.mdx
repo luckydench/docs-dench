@@ -1,0 +1,33 @@
+---
+sidebar_position: 4
+---
+
+# HTTPCache
+
+## What Is This Enum?
+
+A string enum representing Fetch API `RequestInit.cache` values. It configures how a request interacts with the browser's HTTP cache.
+
+## Values
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `NO_CACHE` | `'no-cache'` | Revalidates a stored response with the server before using it. |
+| `NO_STORE` | `'no-store'` | Does not read from the cache or store the response in it. |
+| `RELOAD` | `'reload'` | Does not read from the cache and updates it with the server response. |
+| `FORCE_CACHE` | `'force-cache'` | Prefers a cached response. |
+| `ONLY_IF_CACHED` | `'only-if-cached'` | Uses only a response that already exists in the cache. |
+| `DEFAULT` | `'default'` | Uses the runtime's default HTTP cache behavior. |
+
+## Example
+
+```ts
+import { dench, HTTPCache } from 'dench-fetch';
+
+const users = await dench('https://api.example.com')
+  .get('/users')
+  .cache(HTTPCache.NO_CACHE)
+  .toJson();
+
+// RequestInit: { method: 'GET', cache: 'no-cache' }
+```

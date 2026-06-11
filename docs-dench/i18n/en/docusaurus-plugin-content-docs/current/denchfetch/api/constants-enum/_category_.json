@@ -1,0 +1,8 @@
+{
+  "label": "Constants & Enums",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Authentication, URL normalization, and Fetch API option enums exported by dench-fetch."
+  }
+}

@@ -1,0 +1,30 @@
+---
+sidebar_position: 7
+---
+
+# HTTPMode
+
+## What Is This Enum?
+
+A string enum representing Fetch API `RequestInit.mode` values. It configures how cross-origin requests are handled.
+
+## Values
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `CORS` | `'cors'` | Allows cross-origin requests using the CORS protocol. |
+| `NO_CORS` | `'no-cors'` | Sends cross-origin requests with restricted methods and headers, and may return an opaque response. |
+| `SAME_ORIGIN` | `'same-origin'` | Does not allow cross-origin requests. |
+
+## Example
+
+```ts
+import { dench, HTTPMode } from 'dench-fetch';
+
+const response = await dench('https://api.example.com')
+  .get('/public-resource')
+  .mode(HTTPMode.CORS)
+  .toResponse();
+
+// RequestInit: { method: 'GET', mode: 'cors' }
+```

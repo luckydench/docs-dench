@@ -1,0 +1,68 @@
+---
+sidebar_position: 2
+---
+
+# DenchBuilder
+
+## Summary
+
+A generic interface that defines the authentication, Fetch options, cancellation, error handling, and URL normalization APIs shared by all request builders.
+
+## Type Definition
+
+```ts
+interface DenchBuilder<T, R extends DenchBuilder<T, R>> {
+  config: DenchBaseConfig;
+  copy: () => R;
+  auth: (token: string, type?: DenchAuthType) => R;
+  credentials: (credentials: HTTPCredentials) => R;
+  mode: (mode: HTTPMode) => R;
+  cache: (cache: HTTPCache) => R;
+  redirect: (redirect: HTTPRedirect) => R;
+  referrerPolicy: (policy: HTTPReferrerPolicy) => R;
+  abort: (controller: AbortController) => R;
+  timeout: (ms: number) => R;
+  error: (callback: (error: unknown) => void) => R;
+  params: (params: DenchURLSearchParams) => R;
+  boundaryNormalize: () => R;
+  hardNormalize: () => R;
+  URLNormalize: (normalizeMode: DenchURLNormalizeMode) => R;
+}
+```
+
+### Generics
+
+| Generic | Description |
+| --- | --- |
+| `T` | The JSON response type of the request. |
+| `R` | The concrete builder type returned by each chaining method. It must extend `DenchBuilder<T, R>`. |
+
+## Properties
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `config` | `DenchBaseConfig` | Yes | The current builder's URL and request configuration. |
+| `copy` | `() => R` | Yes | Returns a builder containing a copy of the current configuration. |
+| `auth` | `(token: string, type?: DenchAuthType) => R` | Yes | Sets the `Authorization` header. |
+| `credentials` | `(credentials: HTTPCredentials) => R` | Yes | Sets the Fetch credentials policy. |
+| `mode` | `(mode: HTTPMode) => R` | Yes | Sets the Fetch request mode. |
+| `cache` | `(cache: HTTPCache) => R` | Yes | Sets the Fetch cache policy. |
+| `redirect` | `(redirect: HTTPRedirect) => R` | Yes | Sets the redirect handling policy. |
+| `referrerPolicy` | `(policy: HTTPReferrerPolicy) => R` | Yes | Sets the referrer policy. |
+| `abort` | `(controller: AbortController) => R` | Yes | Connects an `AbortController` to the request. |
+| `timeout` | `(ms: number) => R` | Yes | Sets the request timeout in milliseconds. |
+| `error` | `(callback: (error: unknown) => void) => R` | Yes | Sets the request error callback. |
+| `params` | `(params: DenchURLSearchParams) => R` | Yes | API for setting URL parameters. The current implementation does not apply them to the URL. |
+| `boundaryNormalize` | `() => R` | Yes | Selects boundary URL normalization. |
+| `hardNormalize` | `() => R` | Yes | Selects strict URL normalization. |
+| `URLNormalize` | `(normalizeMode: DenchURLNormalizeMode) => R` | Yes | Sets the URL normalization mode directly. |
+
+## Used By
+
+- Extended by `DenchCreateBuilder<T>` as `DenchBuilder<T, DenchCreateBuilder<T>>`.
+- Extended by `DenchGetBuilder<T>` as `DenchBuilder<T, DenchGetBuilder<T>>`.
+- Defines the common chaining APIs for POST, PUT, GET, and DELETE request builders.
+
+```ts
+import type { DenchBuilder } from 'dench-fetch';
+```

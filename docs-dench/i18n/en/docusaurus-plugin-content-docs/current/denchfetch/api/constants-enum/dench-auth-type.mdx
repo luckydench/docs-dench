@@ -1,0 +1,38 @@
+---
+sidebar_position: 1
+---
+
+# DenchAuthType
+
+## What Is This Enum?
+
+A string enum that selects the authentication scheme prefix used in the `Authorization` header by `auth(token, type)`.
+
+When `type` is omitted, `DenchAuthType.BEARER` is used. `ETC` uses the provided token directly as the Header value without adding a prefix.
+
+## Values
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `ETC` | `'ETC'` | Uses the token directly without adding a prefix. |
+| `BASIC` | `'Basic'` | Uses the Basic authentication prefix. |
+| `BEARER` | `'Bearer'` | Uses the Bearer token authentication prefix. This is the default. |
+| `DIGEST` | `'Digest'` | Uses the Digest authentication prefix. |
+| `NEGOTIATE` | `'Negotiate'` | Uses the Negotiate authentication prefix. |
+| `AWS4_HMAC_SHA256` | `'AWS4-HMAC-SHA256'` | Uses the AWS Signature Version 4 authentication prefix. |
+| `API_KEY` | `'ApiKey'` | Uses the ApiKey authentication prefix. |
+| `TOKEN` | `'Token'` | Uses the Token authentication prefix. |
+| `HMAC` | `'HMAC'` | Uses the HMAC authentication prefix. |
+
+## Example
+
+```ts
+import { dench, DenchAuthType } from 'dench-fetch';
+
+const response = await dench('https://api.example.com')
+  .get('/secure')
+  .auth('encoded-credentials', DenchAuthType.BASIC)
+  .toResponse();
+
+// Authorization: Basic encoded-credentials
+```

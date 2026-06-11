@@ -1,0 +1,45 @@
+---
+sidebar_position: 6
+---
+
+# DenchInterface
+
+## Summary
+
+The API client type returned by `dench(baseURL)`. It provides the base URL and request builder factory functions for each HTTP method.
+
+## Type Definition
+
+```ts
+interface DenchInterface {
+  baseURL: DenchHTTPURL;
+  get: <T>(api?: string) => DenchGetBuilder<T>;
+  post: <T>(api?: string, data?: unknown) => DenchCreateBuilder<T>;
+  put: <T>(api?: string, data?: unknown) => DenchCreateBuilder<T>;
+  delete: <T>(api?: string) => DenchGetBuilder<T>;
+}
+```
+
+`DenchInterface` itself has no generics. The generic `T` on each HTTP method represents the JSON response type returned by `toJson()` for that request.
+
+## Properties
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `baseURL` | `DenchHTTPURL` | Yes | The base URL used by the client. |
+| `get` | `<T>(api?: string) => DenchGetBuilder<T>` | Yes | Creates a GET request builder. |
+| `post` | `<T>(api?: string, data?: unknown) => DenchCreateBuilder<T>` | Yes | Creates a POST request builder. |
+| `put` | `<T>(api?: string, data?: unknown) => DenchCreateBuilder<T>` | Yes | Creates a PUT request builder. |
+| `delete` | `<T>(api?: string) => DenchGetBuilder<T>` | Yes | Creates a DELETE request builder. |
+
+## Used By
+
+- Return type of the `dench(baseURL)` function.
+- Defines the `get()`, `post()`, `put()`, and `delete()` request builder factory APIs.
+
+```ts
+import { dench } from 'dench-fetch';
+import type { DenchInterface } from 'dench-fetch';
+
+const api: DenchInterface = dench('https://api.example.com');
+```
