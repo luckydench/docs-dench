@@ -90,7 +90,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'DenchFetch',
+          label: 'docs',
         },
         {
           type : 'docsVersionDropdown',
