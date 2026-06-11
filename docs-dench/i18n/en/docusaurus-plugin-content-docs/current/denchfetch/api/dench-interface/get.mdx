@@ -1,0 +1,55 @@
+---
+sidebar_position: 2
+---
+
+# get()
+
+## Function Signature
+
+```ts
+get: <T>(api?: string) => DenchGetBuilder<T>
+```
+
+## Related RequestInit Property
+
+```ts
+{
+  method: 'GET'
+}
+```
+
+## Description
+
+Returns a `DenchGetBuilder<T>` for configuring a GET request. `api` is the API path appended to the base URL. An empty string is used when it is omitted.
+
+The generic type `T` represents the TypeScript type of the JSON response returned later by `toJson()`.
+
+## Example
+
+```ts
+import { dench } from 'dench-fetch';
+
+type User = {
+  id: number;
+  name: string;
+};
+
+const api = dench('https://api.example.com');
+const request = api.get<User>('/users/1');
+
+const user = await request.toJson();
+```
+
+The executed request is equivalent to:
+
+```ts
+fetch('https://api.example.com/users/1', {
+  method: 'GET',
+});
+```
+
+## Notes
+
+- Calling `get()` does not execute the request. You must call a runner method.
+- `T` is a compile-time type and does not validate the JSON response at runtime.
+- The GET builder does not provide methods for sending a request body.

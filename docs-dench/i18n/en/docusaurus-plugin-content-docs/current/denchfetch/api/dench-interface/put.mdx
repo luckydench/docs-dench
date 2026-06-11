@@ -1,0 +1,69 @@
+---
+sidebar_position: 4
+---
+
+# put()
+
+## Function Signature
+
+```ts
+put: <T>(api?: string, data?: unknown) => DenchCreateBuilder<T>
+```
+
+## Related RequestInit Property
+
+```ts
+{
+  method: 'PUT'
+}
+```
+
+## Description
+
+Returns a `DenchCreateBuilder<T>` for configuring a PUT request. The returned builder can configure request bodies such as JSON, `FormData`, and `Blob`.
+
+The generic type `T` represents the TypeScript type of the JSON response returned later by `toJson()`.
+
+## Example
+
+```ts
+import { dench } from 'dench-fetch';
+
+type User = {
+  id: number;
+  name: string;
+};
+
+const api = dench('https://api.example.com');
+
+const user = await api
+  .put<User>('/users/1')
+  .sendJson({ name: 'Updated Dench' })
+  .toJson();
+```
+
+Immediately after `put()`, the `RequestInit` is:
+
+```ts
+{
+  method: 'PUT'
+}
+```
+
+After applying `sendJson()`, the executed request is equivalent to:
+
+```ts
+fetch('https://api.example.com/users/1', {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ name: 'Updated Dench' }),
+});
+```
+
+## Notes
+
+- The type declaration includes a second `data` parameter, but the current implementation does not use it as the request body.
+- Pass the request body to one of the body configuration methods on the returned builder.
+- Calling `put()` does not execute the request.

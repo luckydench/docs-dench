@@ -1,0 +1,55 @@
+---
+sidebar_position: 3
+---
+
+# toFormData()
+
+## Function Signature
+
+```ts
+toFormData: () => Promise<FormData>
+```
+
+## Description
+
+Executes a `fetch()` request using the settings configured on the current builder, then calls the native `Response.formData()` method and returns a `FormData` object.
+
+Use it to parse responses in `multipart/form-data` or `application/x-www-form-urlencoded` format.
+
+`toFormData()` does not add any new `RequestInit` or Header properties.
+
+## Example
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+const formData = await api
+  .get('/profile-form')
+  .toFormData();
+
+console.log(formData.get('name'));
+```
+
+The executed request uses the following `RequestInit`:
+
+```ts
+{
+  method: 'GET',
+}
+```
+
+The response is processed internally as follows:
+
+```ts
+const response = await fetch(url, requestInit);
+const formData = await response.formData();
+```
+
+## Notes
+
+- The response `Content-Type` must be a format supported by `Response.formData()`.
+- `Response.formData()` may throw an error if the response format is invalid.
+- If `response.ok` is `false`, the method throws an HTTP failure error without parsing the FormData.
+- Calling `toFormData()` again on the same builder executes a new request.

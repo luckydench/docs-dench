@@ -1,0 +1,62 @@
+---
+sidebar_position: 2
+---
+
+# toJson()
+
+## Function Signature
+
+```ts
+toJson: () => Promise<T>
+```
+
+## Description
+
+Executes a `fetch()` request using the settings configured on the current builder, then calls the native `Response.json()` method and returns the parsed JSON value.
+
+The return type `T` is selected through `get<T>()`, `post<T>()`, `put<T>()`, `delete<T>()`, or `api<T>()`.
+
+`toJson()` does not add any new `RequestInit` or Header properties.
+
+## Example
+
+```ts
+import { dench } from 'dench-fetch';
+
+type User = {
+  id: number;
+  name: string;
+};
+
+const api = dench('https://api.example.com');
+
+const user = await api
+  .get<User>('/users/1')
+  .auth('access-token')
+  .toJson();
+```
+
+The executed request uses the following `RequestInit` and Header:
+
+```ts
+{
+  method: 'GET',
+  headers: {
+    Authorization: 'Bearer access-token',
+  },
+}
+```
+
+The response is processed internally as follows:
+
+```ts
+const response = await fetch(url, requestInit);
+const user = await response.json() as User;
+```
+
+## Notes
+
+- `T` is a TypeScript compile-time type. It does not validate whether the response JSON actually matches `T` at runtime.
+- If the response body is empty or not valid JSON, `Response.json()` throws an error.
+- If `response.ok` is `false`, the method throws an HTTP failure error without parsing the JSON.
+- Calling `toJson()` again on the same builder executes a new request instead of reusing the previous response.

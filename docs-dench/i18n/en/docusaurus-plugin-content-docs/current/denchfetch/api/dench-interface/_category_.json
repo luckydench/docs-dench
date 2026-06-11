@@ -1,0 +1,8 @@
+{
+  "label": "DenchInterface",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Properties and HTTP method APIs available on a client created with dench()."
+  }
+}

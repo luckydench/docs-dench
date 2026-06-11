@@ -1,0 +1,50 @@
+---
+sidebar_position: 5
+---
+
+# delete()
+
+## Function Signature
+
+```ts
+delete: <T>(api?: string) => DenchGetBuilder<T>
+```
+
+## Related RequestInit Property
+
+```ts
+{
+  method: 'DELETE'
+}
+```
+
+## Description
+
+Returns a `DenchGetBuilder<T>` for configuring a DELETE request. An empty API path is used when `api` is omitted.
+
+If the server returns a JSON response, specify the generic type `T` and receive it with `toJson()`. Use `toResponse()` when you do not need a response body.
+
+## Example
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+await api
+  .delete('/users/1')
+  .toResponse();
+```
+
+The executed request is equivalent to:
+
+```ts
+fetch('https://api.example.com/users/1', {
+  method: 'DELETE',
+});
+```
+
+## Notes
+
+- `delete()` returns a `DenchGetBuilder<T>`, so it does not provide methods for sending a request body.
+- Calling `delete()` does not execute the request.

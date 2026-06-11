@@ -1,0 +1,42 @@
+---
+sidebar_position: 1
+---
+
+# baseURL
+
+## Property Signature
+
+```ts
+baseURL: DenchHTTPURL
+```
+
+```ts
+type DenchHTTPURL =
+  | `http://${string}`
+  | `https://${string}`
+  | `file://${string}`
+  | `ftp://${string}`
+  | `ws://${string}`
+  | `wss://${string}`;
+```
+
+## Description
+
+`baseURL` is the base URL passed to `dench(baseURL)`. Every request created by the client combines this value with the request's API path to produce the final URL.
+
+## Example
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+console.log(api.baseURL);
+// https://api.example.com
+```
+
+## Notes
+
+- In TypeScript, `DenchHTTPURL` only accepts strings that include a supported protocol.
+- The base URL and API path are combined when the request is executed.
+- The base URL is not a `RequestInit` property. It is used to construct the request URL passed as the first argument to `fetch()`.

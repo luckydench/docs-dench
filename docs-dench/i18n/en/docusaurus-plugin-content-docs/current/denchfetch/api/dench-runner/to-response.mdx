@@ -1,0 +1,59 @@
+---
+sidebar_position: 1
+---
+
+# toResponse()
+
+## Function Signature
+
+```ts
+toResponse: () => Promise<Response>
+```
+
+## Description
+
+Executes a `fetch()` request using the URL and `RequestInit` configured on the current builder, then returns the native `Response` object.
+
+Use it when you need to process the response body manually or inspect response information such as the status and headers.
+
+`toResponse()` does not add any new `RequestInit` or Header properties. It executes the request using the values configured on the builder before the call.
+
+## Example
+
+```ts
+import { dench, HTTPCache } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+const response = await api
+  .get('/users/1')
+  .cache(HTTPCache.NO_CACHE)
+  .toResponse();
+
+console.log(response.status);
+console.log(response.headers.get('Content-Type'));
+
+const user = await response.json();
+```
+
+The executed request uses the following `RequestInit`:
+
+```ts
+{
+  method: 'GET',
+  cache: 'no-cache',
+}
+```
+
+The returned value is the following native object:
+
+```ts
+Promise<Response>
+```
+
+## Notes
+
+- The network request is executed when `toResponse()` is called.
+- If `response.ok` is `false`, the method throws an error instead of returning the `Response`.
+- A returned `Response` body can generally only be consumed once. Use `response.clone()` if you need to read it in multiple ways.
+- Calling runner methods multiple times on the same builder executes a new request each time.
