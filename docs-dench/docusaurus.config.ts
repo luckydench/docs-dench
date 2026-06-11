@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Dench',
-  tagline: '바보도 쉽게 이해하고 번개처럼 빠르게 사용할 수 있는 Fetch API',
+  tagline: '쉽게 이해하고 번개처럼 빠르게 사용할 수 있는 Fetch API',
   favicon: 'img/favicon.ico',
 
   future: {
@@ -90,7 +90,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'DenchFetch',
         },
         {
           type : 'docsVersionDropdown',
@@ -100,6 +100,7 @@ const config: Config = {
           type : "localeDropdown",
           position : 'right',
         },
+        { to: '/dench/graphql', label: 'DenchGraphQL', position: 'left' },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/luckydench/dench-fetch',
