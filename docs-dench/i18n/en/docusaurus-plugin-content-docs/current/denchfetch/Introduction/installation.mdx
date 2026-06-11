@@ -1,0 +1,67 @@
+---
+sidebar_position: 2
+---
+
+# Installation
+
+## Install the package
+
+Install `dench-fetch` with your package manager.
+
+```bash npm2yarn
+npm install dench-fetch
+```
+
+To install the beta release, use the `beta` tag.
+
+```bash npm2yarn
+npm install dench-fetch@beta
+```
+
+## Runtime requirements
+
+`dench-fetch` has no runtime dependencies and uses the global Fetch API. Your runtime must provide the following Web APIs:
+
+- `fetch`
+- `Response`
+- `FormData` and `Blob` when using those body formats
+- `AbortController` and `AbortSignal` when using `abort()` or `timeout()`
+
+Modern browsers generally provide these APIs without additional configuration. In Node.js, use a version that includes the global Fetch API. If your project supports an older runtime, you must provide the required polyfills.
+
+## Create your first client
+
+After installation, import `dench` and pass the API base URL.
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+```
+
+The base URL must include a protocol. TypeScript accepts URLs beginning with:
+
+- `http://`
+- `https://`
+- `file://`
+- `ftp://`
+- `ws://`
+- `wss://`
+
+Use an `http://` or `https://` URL for a typical HTTP API client.
+
+## Verify the installation
+
+Use a simple request to verify that the package and import work correctly.
+
+```ts
+import { dench } from 'dench-fetch';
+
+const response = await dench('https://api.example.com')
+  .get('/health')
+  .toResponse();
+
+console.log(response.status);
+```
+
+The network request runs when `toResponse()` is called. If the server returns a 400–599 status code, `dench-fetch` throws an error.

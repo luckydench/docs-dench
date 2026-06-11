@@ -1,0 +1,73 @@
+---
+sidebar_position: 1
+---
+
+# Introduction
+
+`dench-fetch` is a TypeScript HTTP request builder built on top of the native Fetch API.
+
+Instead of writing a `RequestInit` object for every request, you can compose an HTTP method and request options through method chaining, then execute the request with an explicit terminal method.
+
+```ts
+import { dench } from 'dench-fetch';
+
+type User = {
+  id: number;
+  name: string;
+};
+
+const api = dench('https://api.example.com');
+
+const user = await api
+  .get<User>('/users/1')
+  .auth('access-token')
+  .timeout(3000)
+  .toJson();
+```
+
+## Why dench-fetch?
+
+The native Fetch API is flexible, but repeated configuration can make the intent of a request harder to read.
+
+```ts
+const response = await fetch('https://api.example.com/users/1', {
+  method: 'GET',
+  headers: {
+    Authorization: 'Bearer access-token',
+  },
+  signal: AbortSignal.timeout(3000),
+});
+
+if (!response.ok) {
+  throw new Error(`Request failed: ${response.status}`);
+}
+
+const user = await response.json();
+```
+
+With `dench-fetch`, the same request is expressed as a chain that reads in order: HTTP method, authentication, timeout, and response format.
+
+## Key features
+
+- **Built on the Fetch API**: Internally uses the global `fetch` function and can return a native `Response` through `toResponse()`.
+- **Explicit execution**: Configuration methods build the request. `toJson()`, `toFormData()`, and `toResponse()` execute it.
+- **Typed responses**: Specify the expected JSON response type through `get<T>()`, `post<T>()`, `put<T>()`, or `delete<T>()`.
+- **Body helpers**: Send JSON, `FormData`, `Blob`, URL-encoded data, or a raw body with dedicated methods.
+- **Reusable configuration**: Reuse authentication, timeout, and other settings with `copy()` and `api()`.
+- **Boundary URL normalization by default**: Automatically cleans up duplicate slashes between the base URL and API path.
+- **HTTP error handling**: Throws when `response.ok` is `false` and invokes a registered error callback.
+
+## Supported requests
+
+The client currently supports the following HTTP methods.
+
+| Method | Builder | Body helpers |
+| --- | --- | --- |
+| GET | `get<T>()` | Not supported |
+| POST | `post<T>()` | Supported |
+| PUT | `put<T>()` | Supported |
+| DELETE | `delete<T>()` | Not supported |
+
+`dench-fetch` is not a separate networking engine that replaces Fetch. It is a request-building layer that makes Fetch requests easier to read and reuse.
+
+The following pages cover installation, core concepts, and basic usage.

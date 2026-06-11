@@ -27,7 +27,9 @@ function HomepageHeader() {
             반복되는 요청 설정을 짧고 타입 안전한 체인으로 정리합니다.
           </p>
           <div className={styles.buttons}>
-            <Link className={styles.primaryButton} to="/docs/intro">
+            <Link
+              className={styles.primaryButton}
+              to="/docs/denchfetch/Introduction/Introduction">
               빠르게 시작하기
               <span aria-hidden="true">→</span>
             </Link>

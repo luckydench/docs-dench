@@ -175,7 +175,9 @@ export default function HomepageFeatures(): ReactNode {
             <span className={styles.closingPrompt}>$</span>
             <code>npm install dench-fetch</code>
           </div>
-          <Link className={styles.docsLink} to="/docs/intro">
+          <Link
+            className={styles.docsLink}
+            to="/docs/denchfetch/Introduction/Introduction">
             문서에서 시작하기
             <span aria-hidden="true">→</span>
           </Link>

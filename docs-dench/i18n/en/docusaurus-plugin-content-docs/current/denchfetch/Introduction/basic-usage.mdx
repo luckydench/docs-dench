@@ -1,0 +1,260 @@
+---
+sidebar_position: 4
+---
+
+# Basic Usage
+
+This page explains how to create a client and write common HTTP requests.
+
+## Create a client
+
+Create a client with the API server's base URL.
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+```
+
+The `api` client can be reused for every request that shares the same base URL.
+
+## GET request
+
+Pass an API path and expected JSON response type to `get<T>()`, then execute it with `toJson()`.
+
+```ts
+type Post = {
+  id: number;
+  title: string;
+  body: string;
+};
+
+const post = await api
+  .get<Post>('/posts/1')
+  .toJson();
+```
+
+Use `toResponse()` when you need the native `Response` instead of parsed JSON.
+
+```ts
+const response = await api
+  .get('/health')
+  .toResponse();
+
+console.log(response.status);
+```
+
+## POST request
+
+Pass POST and PUT request bodies to a body helper such as `sendJson()`.
+
+```ts
+type CreatedPost = {
+  id: number;
+  title: string;
+};
+
+const created = await api
+  .post<CreatedPost>('/posts')
+  .sendJson({
+    title: 'New post',
+    body: 'Post content',
+  })
+  .toJson();
+```
+
+`sendJson(data)` serializes the value with `JSON.stringify()` and sets the `Content-Type: application/json` header.
+
+## PUT request
+
+```ts
+const updated = await api
+  .put<Post>('/posts/1')
+  .sendJson({
+    title: 'Updated title',
+    body: 'Updated content',
+  })
+  .toJson();
+```
+
+## DELETE request
+
+```ts
+await api
+  .delete('/posts/1')
+  .toResponse();
+```
+
+DELETE requests use the read-style builder and do not provide body helpers.
+
+## Body formats
+
+POST and PUT builders provide helpers for common body formats.
+
+### FormData
+
+```ts
+const form = new FormData();
+form.append('name', 'dench');
+form.append('file', file);
+
+await api
+  .post('/uploads')
+  .sendForm(form)
+  .toResponse();
+```
+
+`sendForm()` requires a `FormData` instance. It does not set the `Content-Type` header directly, allowing the runtime to include the multipart boundary.
+
+### Blob
+
+```ts
+const blob = new Blob(['binary data']);
+
+await api
+  .post('/files')
+  .sendBlob(blob)
+  .toResponse();
+```
+
+### URL-encoded data
+
+```ts
+await api
+  .post('/sessions')
+  .sendUrlEncoded({
+    username: 'dench',
+    password: 'secret',
+  })
+  .toResponse();
+```
+
+`sendUrlEncoded()` converts the value to `URLSearchParams` and sends it as `application/x-www-form-urlencoded`.
+
+### Raw body
+
+```ts
+await api
+  .post('/raw')
+  .sendRaw('raw body')
+  .toResponse();
+```
+
+`sendRaw()` places a `BodyInit` value into the request body without transforming it and sets `Content-Type: application/octet-stream`.
+
+## Authentication and request options
+
+`auth()` adds a Bearer authorization header by default.
+
+```ts
+const profile = await api
+  .get<Profile>('/profile')
+  .auth('access-token')
+  .toJson();
+```
+
+Pass a `DenchAuthType` to use another authentication prefix.
+
+```ts
+import { DenchAuthType } from 'dench-fetch';
+
+const response = await api
+  .get('/secure')
+  .auth('encoded-credentials', DenchAuthType.BASIC)
+  .toResponse();
+```
+
+Use the provided enums and builder methods to configure cookies and Fetch API options.
+
+```ts
+import {
+  HTTPCache,
+  HTTPCredentials,
+  HTTPMode,
+  HTTPRedirect,
+  HTTPReferrerPolicy,
+} from 'dench-fetch';
+
+const result = await api
+  .get<Result>('/result')
+  .credentials(HTTPCredentials.INCLUDE)
+  .mode(HTTPMode.CORS)
+  .cache(HTTPCache.NO_CACHE)
+  .redirect(HTTPRedirect.FOLLOW)
+  .referrerPolicy(HTTPReferrerPolicy.NO_REFERRER)
+  .toJson();
+```
+
+## Timeout and cancellation
+
+`timeout(ms)` aborts the request after the specified number of milliseconds.
+
+```ts
+const result = await api
+  .get<Result>('/slow')
+  .timeout(5000)
+  .toJson();
+```
+
+Pass an `AbortController` to cancel the request manually.
+
+```ts
+const controller = new AbortController();
+
+const request = api
+  .get<Result>('/slow')
+  .abort(controller)
+  .toJson();
+
+controller.abort();
+
+await request;
+```
+
+When `abort(controller)` and `timeout(ms)` are used together, the provided controller is aborted when the timeout expires.
+
+## Error handling
+
+HTTP failure responses and network errors are thrown as exceptions.
+
+```ts
+try {
+  const post = await api.get<Post>('/posts/missing').toJson();
+} catch (error) {
+  console.error('Failed to process request:', error);
+}
+```
+
+Register an `error()` callback for shared logging.
+
+```ts
+const post = await api
+  .get<Post>('/posts/1')
+  .error((error) => {
+    console.error('API request failed:', error);
+  })
+  .toJson();
+```
+
+The `error()` callback does not consume the error. The same error is rethrown after the callback runs.
+
+## Reusing common settings
+
+Create a builder with common settings, then branch requests with `copy()` and `api()`.
+
+```ts
+const authenticated = api
+  .get()
+  .auth('access-token')
+  .timeout(3000);
+
+const users = authenticated.copy().api<User[]>('/users');
+const posts = authenticated.copy().api<Post[]>('/posts');
+
+const [userList, postList] = await Promise.all([
+  users.toJson(),
+  posts.toJson(),
+]);
+```
+
+This pattern avoids repeating authentication and timeout configuration while keeping each request path and response type independent.

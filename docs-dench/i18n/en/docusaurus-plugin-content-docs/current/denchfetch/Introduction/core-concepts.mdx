@@ -1,0 +1,152 @@
+---
+sidebar_position: 3
+---
+
+# Core Concepts
+
+The `dench-fetch` API follows three steps: **create a client, configure a request builder, and execute the request**.
+
+```ts
+const api = dench('https://api.example.com'); // Create a client
+
+const request = api
+  .get<User>('/users/1') // Create a request builder
+  .auth('access-token')
+  .timeout(3000); // Configure the request
+
+const user = await request.toJson(); // Execute the request
+```
+
+## 1. Client
+
+`dench(baseURL)` returns a reusable client for requests to the same server.
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+```
+
+The client provides `get()`, `post()`, `put()`, and `delete()`. These methods return request builders without sending a request immediately.
+
+## 2. Request builder
+
+A request builder stores the HTTP method, API path, authentication, timeout, and other settings. Configuration methods return another builder, allowing options to be composed through chaining.
+
+```ts
+const request = api
+  .get<User>('/users/1')
+  .auth('access-token')
+  .credentials(HTTPCredentials.INCLUDE)
+  .timeout(5000);
+```
+
+GET and DELETE return read-style builders without body helpers. POST and PUT return create-style builders with body helpers such as `sendJson()`.
+
+## 3. Runner methods
+
+Configuring a builder does not send a network request. The request runs when one of the following terminal methods is called.
+
+| Method | Return type | Description |
+| --- | --- | --- |
+| `toJson()` | `Promise<T>` | Parses the response as JSON. |
+| `toFormData()` | `Promise<FormData>` | Parses the response as `FormData`. |
+| `toResponse()` | `Promise<Response>` | Returns the native `Response`. |
+
+```ts
+const response = await api.get('/health').toResponse();
+const user = await api.get<User>('/users/1').toJson();
+```
+
+The type passed to `toJson()` does not validate or transform the response at runtime. Your application must ensure the server response matches the declared type.
+
+## 4. Request and response types
+
+Specify a generic response type on the HTTP method or `api<T>()`.
+
+```ts
+type User = {
+  id: number;
+  name: string;
+};
+
+const user = await api.get<User>('/users/1').toJson();
+```
+
+Here, the TypeScript type of `user` is `User`.
+
+## 5. URL joining and normalization
+
+The client's base URL and request API path are joined when the request executes. The default mode is `BOUNDARY`, which ensures exactly one slash exists between the two URL parts.
+
+```ts
+dench('https://api.example.com/')
+  .get('/users');
+
+// Request URL: https://api.example.com/users
+```
+
+Available modes:
+
+| Mode | Configuration | Behavior |
+| --- | --- | --- |
+| `BOUNDARY` | Default or `.boundaryNormalize()` | Normalizes only the boundary between the URL parts. |
+| `HARD` | `.hardNormalize()` | Also collapses duplicate slashes inside the URL and removes the trailing API slash. |
+| `NONE` | `.URLNormalize(DenchURLNormalizeMode.NONE)` | Joins both strings without normalization. |
+
+```ts
+import { DenchURLNormalizeMode } from 'dench-fetch';
+
+const response = await api
+  .get('//path-that-keeps-slashes')
+  .URLNormalize(DenchURLNormalizeMode.NONE)
+  .toResponse();
+```
+
+Use `NONE` when consecutive slashes are intentional.
+
+## 6. Error handling
+
+Unlike the native Fetch API, `dench-fetch` throws when `response.ok` is `false`. In general, HTTP status codes from 400 to 599 are treated as failures.
+
+```ts
+try {
+  await api.get('/missing').toJson();
+} catch (error) {
+  console.error(error);
+}
+```
+
+Use `error(callback)` to run a callback before the error is rethrown.
+
+```ts
+await api
+  .get('/missing')
+  .error((error) => {
+    console.error('Request failed:', error);
+  })
+  .toJson();
+```
+
+The callback does not consume the error. Handle the rethrown error with `try...catch` when needed.
+
+## 7. Reusing builders
+
+`copy()` returns an independent builder with copied request settings. Combine it with `api()` to reuse common authentication or timeout settings across multiple paths.
+
+```ts
+const common = api
+  .get()
+  .auth('access-token')
+  .timeout(3000);
+
+const usersRequest = common.copy().api<User[]>('/users');
+const postsRequest = common.copy().api<Post[]>('/posts');
+
+const [users, posts] = await Promise.all([
+  usersRequest.toJson(),
+  postsRequest.toJson(),
+]);
+```
+
+An `AbortController` cannot be reused after it has been aborted. Set a new controller when reusing a builder configured with `abort()`.
