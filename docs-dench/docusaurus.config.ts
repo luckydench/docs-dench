@@ -116,7 +116,7 @@ const config: Config = {
           items: [
             {
               label: 'Tutorial',
-              to: '/docs/denchfetch/Introduction/Introduction',
+              to: '/docs/denchfetch/Introduction/',
             },
           ],
         },

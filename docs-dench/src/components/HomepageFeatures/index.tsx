@@ -196,7 +196,7 @@ export default function HomepageFeatures(): ReactNode {
           </div>
           <Link
             className={styles.docsLink}
-            to="/docs/denchfetch/Introduction/Introduction">
+            to="/docs/denchfetch/Introduction/">
             <Translate id="homepage.features.docsLink">문서에서 시작하기</Translate>
             <span aria-hidden="true">→</span>
           </Link>

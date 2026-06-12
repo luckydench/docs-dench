@@ -34,7 +34,7 @@ function HomepageHeader() {
           <div className={styles.buttons}>
             <Link
               className={styles.primaryButton}
-              to="/docs/denchfetch/Introduction/Introduction">
+              to="/docs/denchfetch/Introduction/">
               <Translate id="homepage.hero.getStarted">빠르게 시작하기</Translate>
               <span aria-hidden="true">→</span>
             </Link>
