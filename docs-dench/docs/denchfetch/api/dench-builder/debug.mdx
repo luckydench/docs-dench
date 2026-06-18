@@ -1,0 +1,68 @@
+---
+sidebar_position: 15
+---
+
+# debug()
+
+## 함수 시그니처
+
+```ts
+debug: () => R
+```
+
+## 출력 형식
+
+```ts
+`[${config.options.method}] ${config.label ? config.label : ''} Current Config:`, config
+```
+
+## 설명
+
+`debug()`는 현재 요청 빌더가 가진 설정을 콘솔에 출력합니다. 별도의 `console.log()` 코드를 추가하지 않고 체인 중간의 `config` 상태를 확인할 때 사용할 수 있습니다.
+
+`debug()`는 요청을 실행하지 않으며, 같은 빌더 타입을 반환하므로 이후에도 체이닝을 계속할 수 있습니다.
+
+## 예제
+
+```ts
+import { dench } from 'dench-fetch';
+
+const result = await dench('https://api.example.com', 'Users')
+  .get('/users')
+  .auth('access-token')
+  .debug()
+  .toJson();
+```
+
+콘솔에는 다음 형태로 출력됩니다.
+
+```ts
+[GET] Users Current Config: {
+  label: 'Users',
+  baseURL: 'https://api.example.com',
+  api: '/users',
+  URLNormalize: DenchURLNormalizeMode.BOUNDARY,
+  options: {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer access-token',
+    },
+  },
+}
+```
+
+## 주의사항
+
+- `debug()`는 호출된 시점의 설정을 출력합니다.
+- 이후 체인에서 추가한 설정은 이전 `debug()` 출력에 포함되지 않습니다.
+- 최종 요청 설정을 확인하려면 `toJson()`, `toResponse()`, `toFormData()` 같은 runner 메서드 바로 앞에서 호출하세요.
+
+```ts
+const result = await dench('https://api.example.com')
+  .get('/users')
+  .debug()
+  .auth('access-token')
+  .toJson();
+```
+
+위 예제의 출력에는 뒤에서 추가한 `auth()` 설정이 포함되지 않습니다.

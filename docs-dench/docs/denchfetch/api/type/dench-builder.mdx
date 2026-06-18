@@ -14,6 +14,7 @@ sidebar_position: 2
 interface DenchBuilder<T, R extends DenchBuilder<T, R>> {
   config: DenchBaseConfig;
   copy: () => R;
+  debug: () => R;
   auth: (token: string, type?: DenchAuthType) => R;
   credentials: (credentials: HTTPCredentials) => R;
   mode: (mode: HTTPMode) => R;
@@ -43,6 +44,7 @@ interface DenchBuilder<T, R extends DenchBuilder<T, R>> {
 | --- | --- | --- | --- |
 | `config` | `DenchBaseConfig` | Yes | 현재 빌더의 URL과 요청 설정입니다. |
 | `copy` | `() => R` | Yes | 현재 설정을 복사한 빌더를 반환합니다. |
+| `debug` | `() => R` | Yes | 현재 체인 시점의 빌더 설정을 콘솔에 출력하고 같은 빌더 타입을 반환합니다. |
 | `auth` | `(token: string, type?: DenchAuthType) => R` | Yes | `Authorization` 헤더를 설정합니다. |
 | `credentials` | `(credentials: HTTPCredentials) => R` | Yes | Fetch credentials 정책을 설정합니다. |
 | `mode` | `(mode: HTTPMode) => R` | Yes | Fetch 요청 mode를 설정합니다. |
@@ -52,7 +54,7 @@ interface DenchBuilder<T, R extends DenchBuilder<T, R>> {
 | `abort` | `(controller: AbortController) => R` | Yes | 요청에 `AbortController`를 연결합니다. |
 | `timeout` | `(ms: number) => R` | Yes | 요청 제한 시간을 밀리초 단위로 설정합니다. |
 | `error` | `(callback: (error: unknown) => void) => R` | Yes | 요청 오류 콜백을 설정합니다. |
-| `params` | `(params: DenchURLSearchParams) => R` | Yes | URL 파라미터 설정 API입니다. 현재 구현은 파라미터를 URL에 반영하지 않습니다. |
+| `params` | `(params: DenchURLSearchParams) => R` | Yes | URL query parameter 입력을 받는 API입니다. 현재 `0.1.0-beta.7` 구현은 값을 URL에 반영하지 않습니다. |
 | `boundaryNormalize` | `() => R` | Yes | URL 경계 정규화 모드를 설정합니다. |
 | `hardNormalize` | `() => R` | Yes | 엄격한 URL 정규화 모드를 설정합니다. |
 | `URLNormalize` | `(normalizeMode: DenchURLNormalizeMode) => R` | Yes | URL 정규화 모드를 직접 설정합니다. |

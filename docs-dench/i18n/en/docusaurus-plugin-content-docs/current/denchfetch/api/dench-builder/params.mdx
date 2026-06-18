@@ -1,0 +1,59 @@
+---
+sidebar_position: 10.5
+---
+
+# params()
+
+## Function Signature
+
+```ts
+params: (params: DenchURLSearchParams) => R
+```
+
+```ts
+type DenchURLSearchParams = ConstructorParameters<typeof URLSearchParams>[0]
+```
+
+## Description
+
+`params()` accepts URL query parameter input in the request builder chain.
+
+The accepted values are the same values supported by the `URLSearchParams` constructor.
+
+```ts
+string | string[][] | Record<string, string> | URLSearchParams | undefined
+```
+
+## Example
+
+```ts
+import { dench } from 'dench-fetch';
+
+const api = dench('https://api.example.com');
+
+const users = await api
+  .get('/users')
+  .params({ page: '1', limit: '20' })
+  .toJson();
+```
+
+String query parameters can also be passed.
+
+```ts
+const users = await api
+  .get('/users')
+  .params('?page=1&limit=20')
+  .toJson();
+```
+
+## Notes
+
+- `params()` was added in `0.1.0-beta.7`.
+- The current implementation converts the provided value to `URLSearchParams`, but does not yet apply it to the final request URL.
+- Until that limitation is removed, include the query string directly in the API path when the request needs actual query parameters.
+
+```ts
+const users = await api
+  .get('/users?page=1&limit=20')
+  .toJson();
+```

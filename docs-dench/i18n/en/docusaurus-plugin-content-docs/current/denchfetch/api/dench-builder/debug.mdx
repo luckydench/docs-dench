@@ -1,0 +1,68 @@
+---
+sidebar_position: 15
+---
+
+# debug()
+
+## Function Signature
+
+```ts
+debug: () => R
+```
+
+## Output Format
+
+```ts
+`[${config.options.method}] ${config.label ? config.label : ''} Current Config:`, config
+```
+
+## Description
+
+`debug()` prints the current request builder configuration to the console. Use it to inspect the `config` state in the middle of a chain without adding a separate `console.log()`.
+
+`debug()` does not execute the request, and it returns the same builder type so the chain can continue.
+
+## Example
+
+```ts
+import { dench } from 'dench-fetch';
+
+const result = await dench('https://api.example.com', 'Users')
+  .get('/users')
+  .auth('access-token')
+  .debug()
+  .toJson();
+```
+
+The console output uses this shape.
+
+```ts
+[GET] Users Current Config: {
+  label: 'Users',
+  baseURL: 'https://api.example.com',
+  api: '/users',
+  URLNormalize: DenchURLNormalizeMode.BOUNDARY,
+  options: {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer access-token',
+    },
+  },
+}
+```
+
+## Notes
+
+- `debug()` prints the configuration at the point where it is called.
+- Settings added later in the chain are not included in an earlier `debug()` output.
+- To inspect the final request configuration, call it immediately before a runner method such as `toJson()`, `toResponse()`, or `toFormData()`.
+
+```ts
+const result = await dench('https://api.example.com')
+  .get('/users')
+  .debug()
+  .auth('access-token')
+  .toJson();
+```
+
+The output from the example above does not include the later `auth()` setting.
